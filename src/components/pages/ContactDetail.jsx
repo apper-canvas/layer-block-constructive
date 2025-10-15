@@ -14,6 +14,7 @@ import Input from "@/components/atoms/Input";
 import ActivityLog from "@/components/molecules/ActivityLog";
 import TaskForm from "@/components/organisms/TaskForm";
 import ActivityForm from "@/components/organisms/ActivityForm";
+import EmailComposer from "@/components/organisms/EmailComposer";
 const ContactDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
