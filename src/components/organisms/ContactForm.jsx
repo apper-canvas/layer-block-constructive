@@ -26,8 +26,8 @@ const ContactForm = ({ isOpen, onClose, contact = null, onSuccess }) => {
     const fetchCompanies = async () => {
       setLoadingCompanies(true);
       try {
-        const response = await companyService.getAll();
-        setCompanies(response?.data || []);
+const response = await companyService.getAll();
+        setCompanies(response || []);
       } catch (error) {
         console.error("Failed to fetch companies:", error);
         toast.error("Failed to load companies");
