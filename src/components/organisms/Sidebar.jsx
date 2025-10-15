@@ -6,7 +6,8 @@ const Sidebar = ({ className = "" }) => {
   const navigation = [
     { name: "Dashboard", href: "", icon: "Home" },
     { name: "Contacts", href: "contacts", icon: "Users" },
-    { name: "Leads", href: "leads", icon: "Target" }
+{ name: "Leads", href: "leads", icon: "Target" },
+    { name: "Deals", href: "deals", icon: "Briefcase" }
   ];
 
   return (
