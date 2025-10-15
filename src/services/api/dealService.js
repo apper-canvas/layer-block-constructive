@@ -27,15 +27,17 @@ export const dealService = {
     return { ...newDeal };
   },
 
-  update: async (id, dealData) => {
+update: async (id, dealData) => {
     await new Promise(resolve => setTimeout(resolve, 400));
     const index = deals.findIndex(d => d.Id === parseInt(id));
     if (index === -1) return null;
+    
     deals[index] = {
       ...deals[index],
       ...dealData,
-      notes: dealData.notes || deals[index].notes || ""
+      notes: dealData.notes !== undefined ? dealData.notes : deals[index].notes || ""
     };
+    
     return { ...deals[index] };
   },
 
