@@ -23,17 +23,37 @@ const loadData = async () => {
       setLoading(true);
       setError("");
       
-      const [contactsData, leadsData, dealsData, activitiesData] = await Promise.all([
+      const [contactsData, leadsData, dealsData] = await Promise.all([
         contactService.getAll(),
         leadService.getAll(),
-        dealService.getAll(),
-        activityService.getAll()
+        dealService.getAll()
       ]);
+      
+      // Aggregate activities from contacts and leads
+      const contactActivities = contactsData.flatMap(contact => 
+        (contact.activities || []).map(activity => ({
+          ...activity,
+          entityType: 'contact',
+          entityId: contact.Id,
+          entityName: contact.name
+        }))
+      );
+      
+      const leadActivities = leadsData.flatMap(lead => 
+        (lead.activities || []).map(activity => ({
+          ...activity,
+          entityType: 'lead',
+          entityId: lead.Id,
+          entityName: lead.name
+        }))
+      );
+      
+      const allActivities = [...contactActivities, ...leadActivities];
       
       setContacts(contactsData);
       setLeads(leadsData);
       setDeals(dealsData);
-      setActivities(activitiesData);
+      setActivities(allActivities);
     } catch (err) {
       setError("Failed to load dashboard data");
     } finally {
