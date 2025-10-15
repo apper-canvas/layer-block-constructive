@@ -95,10 +95,12 @@ const Dashboard = () => {
           <div className="space-y-4">
             {Object.entries(leadStatusCounts).map(([status, count]) => {
               const percentage = leads.length > 0 ? (count / leads.length) * 100 : 0;
-              const statusColors = {
+const statusColors = {
                 "New": "bg-blue-500",
-                "Contacted": "bg-yellow-500",
                 "Qualified": "bg-green-500",
+                "Proposal": "bg-purple-500",
+                "Negotiation": "bg-orange-500",
+                "Won": "bg-emerald-500",
                 "Lost": "bg-gray-500"
               };
               
@@ -123,23 +125,33 @@ const Dashboard = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+<div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
               <div className="flex items-center gap-3">
                 <ApperIcon name="TrendingUp" size={20} className="text-blue-600" />
                 <span className="text-gray-700">Conversion Rate</span>
               </div>
               <span className="font-semibold text-blue-600">
-                {leads.length > 0 ? ((leadStatusCounts.Qualified || 0) / leads.length * 100).toFixed(0) : 0}%
+                {leads.length > 0 ? (((leadStatusCounts.Qualified || 0) + (leadStatusCounts.Proposal || 0) + (leadStatusCounts.Negotiation || 0) + (leadStatusCounts.Won || 0)) / leads.length * 100).toFixed(0) : 0}%
               </span>
             </div>
             
-            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+<div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
               <div className="flex items-center gap-3">
-                <ApperIcon name="Phone" size={20} className="text-green-600" />
-                <span className="text-gray-700">Contacted</span>
+                <ApperIcon name="FileText" size={20} className="text-purple-600" />
+                <span className="text-gray-700">In Proposal</span>
               </div>
-              <span className="font-semibold text-green-600">
-                {leadStatusCounts.Contacted || 0}
+              <span className="font-semibold text-purple-600">
+                {leadStatusCounts.Proposal || 0}
+              </span>
+            </div>
+            
+            <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+              <div className="flex items-center gap-3">
+                <ApperIcon name="Handshake" size={20} className="text-orange-600" />
+                <span className="text-gray-700">Negotiating</span>
+              </div>
+              <span className="font-semibold text-orange-600">
+                {leadStatusCounts.Negotiation || 0}
               </span>
             </div>
             

@@ -19,11 +19,13 @@ const Leads = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
 
-  const statusOptions = [
+const statusOptions = [
     { value: "All", label: "All Status" },
     { value: "New", label: "New" },
-    { value: "Contacted", label: "Contacted" },
     { value: "Qualified", label: "Qualified" },
+    { value: "Proposal", label: "Proposal" },
+    { value: "Negotiation", label: "Negotiation" },
+    { value: "Won", label: "Won" },
     { value: "Lost", label: "Lost" }
   ];
 

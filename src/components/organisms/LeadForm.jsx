@@ -18,10 +18,12 @@ const LeadForm = ({ isOpen, onClose, lead = null, onSuccess }) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const statusOptions = [
+const statusOptions = [
     { value: "New", label: "New" },
-    { value: "Contacted", label: "Contacted" },
     { value: "Qualified", label: "Qualified" },
+    { value: "Proposal", label: "Proposal" },
+    { value: "Negotiation", label: "Negotiation" },
+    { value: "Won", label: "Won" },
     { value: "Lost", label: "Lost" }
   ];
 
