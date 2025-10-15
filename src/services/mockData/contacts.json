@@ -6,6 +6,7 @@
     "phone": "(555) 123-4567",
     "company": "TechCorp Solutions",
     "jobTitle": "Senior Product Manager",
+    "type": "Customer",
     "address": {
       "street": "123 Tech Avenue",
       "city": "San Francisco",
@@ -15,13 +16,14 @@
     "notes": "Key decision maker for enterprise solutions. Prefers morning meetings.",
     "createdAt": "2024-01-15T10:30:00Z"
   },
-  {
+{
     "Id": 2,
     "name": "Michael Chen",
     "email": "m.chen@innovate.co",
     "phone": "(555) 987-6543",
     "company": "Innovate Co",
     "jobTitle": "Chief Technology Officer",
+    "type": "Lead",
     "address": {
       "street": "456 Innovation Blvd",
       "city": "Austin",
@@ -31,13 +33,14 @@
     "notes": "Interested in AI and machine learning integrations. Follow up quarterly.",
     "createdAt": "2024-01-18T14:20:00Z"
   },
-  {
+{
     "Id": 3,
     "name": "Emily Rodriguez",
     "email": "emily.r@startuplab.io",
     "phone": "(555) 456-7890",
     "company": "StartupLab",
     "jobTitle": "Founder & CEO",
+    "type": "Lead",
     "address": {
       "street": "789 Startup Lane",
       "city": "Seattle",
@@ -47,13 +50,14 @@
     "notes": "Recently secured Series A funding. Looking for scalable solutions.",
     "createdAt": "2024-01-22T09:15:00Z"
   },
-  {
+{
     "Id": 4,
     "name": "David Thompson",
     "email": "d.thompson@megacorp.com",
     "phone": "(555) 321-9876",
     "company": "MegaCorp Industries",
     "jobTitle": "VP of Operations",
+    "type": "Customer",
     "address": {
       "street": "321 Corporate Drive",
       "city": "New York",
@@ -63,13 +67,14 @@
     "notes": "Requires detailed ROI analysis. Annual contract renewal in Q3.",
     "createdAt": "2024-01-25T16:45:00Z"
   },
-  {
+{
     "Id": 5,
     "name": "Lisa Wang",
     "email": "lisa.wang@cloudtech.net",
     "phone": "(555) 654-3210",
     "company": "CloudTech Networks",
     "jobTitle": "Director of Engineering",
+    "type": "Partner",
     "address": {
       "street": "654 Cloud Street",
       "city": "Denver",

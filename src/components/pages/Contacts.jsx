@@ -7,16 +7,25 @@ import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
 import Input from "@/components/atoms/Input";
+import Select from "@/components/atoms/Select";
 import Button from "@/components/atoms/Button";
 import { useNavigate } from "react-router-dom";
 const Contacts = () => {
 const navigate = useNavigate();
-  const [contacts, setContacts] = useState([]);
+const [contacts, setContacts] = useState([]);
   const [filteredContacts, setFilteredContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState("All");
+
+  const typeOptions = [
+    { value: "All", label: "All Types" },
+    { value: "Lead", label: "Lead" },
+    { value: "Customer", label: "Customer" },
+    { value: "Partner", label: "Partner" }
+  ];
   const loadContacts = async () => {
     try {
       setLoading(true);
@@ -45,13 +54,18 @@ const navigate = useNavigate();
   }, []);
 
   useEffect(() => {
-    const filtered = contacts.filter(contact => 
+let filtered = contacts.filter(contact => 
       contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contact.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contact.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    if (typeFilter !== "All") {
+      filtered = filtered.filter(contact => contact.type === typeFilter);
+    }
+
     setFilteredContacts(filtered);
-  }, [searchTerm, contacts]);
+  }, [searchTerm, typeFilter, contacts]);
 
 
   const handleDelete = async (contactId) => {
@@ -82,18 +96,30 @@ const handleFormClose = () => {
 return (
     <div className="p-6">
       {/* Search and Filters */}
-      <div className="mb-6">
-        <div className="max-w-md">
+      <div className="mb-6 flex flex-col sm:flex-row gap-4">
+        <div className="flex-1 max-w-md">
           <Input
             placeholder="Search contacts..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
+        <div className="w-full sm:w-48">
+          <Select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+          >
+            {typeOptions.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select>
+        </div>
       </div>
 
       {/* Contacts Grid */}
-      {filteredContacts.length === 0 && searchTerm === "" ? (
+{filteredContacts.length === 0 && searchTerm === "" && typeFilter === "All" ? (
         <Empty
           title="No contacts yet"
           description="Start building your contact list by adding your first contact"
@@ -101,10 +127,10 @@ return (
           onAction={() => setIsFormOpen(true)}
           icon="Users"
         />
-      ) : filteredContacts.length === 0 && searchTerm !== "" ? (
+      ) : filteredContacts.length === 0 ? (
         <Empty
           title="No contacts found"
-          description={`No contacts match "${searchTerm}". Try a different search term.`}
+          description="No contacts match your current filters. Try adjusting your search or filter criteria."
           icon="Search"
         />
       ) : (

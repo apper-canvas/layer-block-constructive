@@ -37,13 +37,7 @@ const Header = ({ onMenuClick, onAddClick, className = "" }) => {
         <h1 className="text-2xl font-bold text-gray-900">{getPageTitle()}</h1>
       </div>
 
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          icon="Search"
-          className="h-8 w-8 p-0"
-        />
+<div className="flex items-center gap-4">
         
         {showAddButton && (
           <Button
