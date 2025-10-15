@@ -12,6 +12,7 @@ import Select from "@/components/atoms/Select";
 import Input from "@/components/atoms/Input";
 import ContactCard from "@/components/molecules/ContactCard";
 import ContactForm from "@/components/organisms/ContactForm";
+import CSVImportModal from "@/components/organisms/CSVImportModal";
 const Contacts = () => {
 const navigate = useNavigate();
 const [contacts, setContacts] = useState([]);
@@ -19,9 +20,9 @@ const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("All");
-
   const typeOptions = [
     { value: "All", label: "All Types" },
     { value: "Lead", label: "Lead" },
@@ -46,14 +47,14 @@ const [contacts, setContacts] = useState([]);
     loadContacts();
   }, []);
 
-  useEffect(() => {
+useEffect(() => {
     const handleAddButtonClick = () => {
       setIsFormOpen(true);
     };
 
     window.addEventListener("addButtonClick", handleAddButtonClick);
     return () => window.removeEventListener("addButtonClick", handleAddButtonClick);
-}, []);
+  }, []);
 
 useEffect(() => {
     const loadFilteredContacts = async () => {
@@ -93,6 +94,23 @@ useEffect(() => {
     loadFilteredContacts();
   }, [searchTerm, typeFilter, contacts]);
 
+const handleExport = async () => {
+    try {
+      const csvContent = await contactService.exportContacts();
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `contacts_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success('Contacts exported successfully!');
+    } catch (error) {
+      toast.error('Failed to export contacts');
+    }
+  };
 
   const handleDelete = async (contactId) => {
     if (!window.confirm("Are you sure you want to delete this contact?")) {
@@ -108,12 +126,17 @@ useEffect(() => {
     }
   };
 
-const handleFormClose = () => {
+  const handleFormClose = () => {
     setIsFormOpen(false);
   };
 
   const handleFormSuccess = () => {
     loadContacts();
+  };
+
+  const handleImportSuccess = () => {
+    loadContacts();
+    setIsImportModalOpen(false);
   };
 
   if (loading) return <Loading />;
@@ -122,8 +145,8 @@ const handleFormClose = () => {
 return (
     <div className="p-6">
       {/* Search and Filters */}
-      <div className="mb-6 flex flex-col sm:flex-row gap-4">
-<div className="flex-1 max-w-md">
+<div className="mb-6 flex flex-col sm:flex-row gap-4">
+        <div className="flex-1 max-w-md">
           <Input
             placeholder="Search contacts..."
             value={searchTerm}
@@ -131,7 +154,7 @@ return (
           />
         </div>
         <div className="w-full sm:w-48">
-<Select
+          <Select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
           >
@@ -141,6 +164,20 @@ return (
               </option>
             ))}
           </Select>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="secondary"
+            onClick={() => setIsImportModalOpen(true)}
+          >
+            Import CSV
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={handleExport}
+          >
+            Export CSV
+          </Button>
         </div>
       </div>
 
@@ -176,6 +213,13 @@ return (
         isOpen={isFormOpen}
         onClose={handleFormClose}
         onSuccess={handleFormSuccess}
+      />
+
+      {/* CSV Import Modal */}
+      <CSVImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onSuccess={handleImportSuccess}
       />
     </div>
   );
