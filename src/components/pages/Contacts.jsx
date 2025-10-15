@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { contactService } from "@/services/api/contactService";
+import { useNavigate } from "react-router-dom";
+import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import Button from "@/components/atoms/Button";
+import Select from "@/components/atoms/Select";
+import Input from "@/components/atoms/Input";
 import ContactCard from "@/components/molecules/ContactCard";
 import ContactForm from "@/components/organisms/ContactForm";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import Empty from "@/components/ui/Empty";
-import Input from "@/components/atoms/Input";
-import Select from "@/components/atoms/Select";
-import Button from "@/components/atoms/Button";
-import { useNavigate } from "react-router-dom";
 const Contacts = () => {
 const navigate = useNavigate();
 const [contacts, setContacts] = useState([]);
@@ -51,7 +51,7 @@ const [contacts, setContacts] = useState([]);
 
     window.addEventListener("addButtonClick", handleAddButtonClick);
     return () => window.removeEventListener("addButtonClick", handleAddButtonClick);
-  }, []);
+}, []);
 
   useEffect(() => {
 let filtered = contacts.filter(contact => 
@@ -145,7 +145,7 @@ return (
         </div>
       )}
 
-      {/* Contact Form Modal */}
+{/* Contact Form Modal */}
       <ContactForm
         isOpen={isFormOpen}
         onClose={handleFormClose}

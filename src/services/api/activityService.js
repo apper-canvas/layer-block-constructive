@@ -1,6 +1,8 @@
 // Activity service handles activity CRUD operations for contacts and leads
 // Activities are stored within the parent entity (contact/lead) in mock data
 
+import { useState } from "react";
+import TaskForm from "@/components/organisms/TaskForm";
 const activityService = {
   // Get all activities for a specific entity (contact or lead)
   getActivitiesByEntityId: async (entityType, entityId) => {
@@ -36,9 +38,10 @@ const activityService = {
 
       const newActivity = {
         Id: highestId + 1,
-        type: activityData.type,
+type: activityData.type,
         date: activityData.date || new Date().toISOString(),
-        notes: activityData.notes || ""
+        notes: activityData.notes || "",
+        taskRelated: activityData.taskRelated || false
       };
 
       const updatedActivities = [...activities, newActivity];

@@ -1,0 +1,51 @@
+[
+  {
+    "Id": 1,
+    "title": "Follow up on proposal discussion",
+    "description": "Discuss pricing details and timeline for implementation",
+    "dueDate": "2024-01-10T14:00:00.000Z",
+    "priority": "high",
+    "completed": false,
+    "entityType": "lead",
+    "entityId": 1,
+    "entityName": "Acme Corporation",
+    "createdAt": "1/8/2024 10:00:00 AMZ"
+  },
+  {
+    "Id": 2,
+    "title": "Send contract to client",
+    "description": "Email final contract with updated terms discussed in last meeting",
+    "dueDate": "2024-01-15T09:00:00.000Z",
+    "priority": "high",
+    "completed": false,
+    "entityType": "contact",
+    "entityId": 1,
+    "entityName": "John Smith",
+    "createdAt": "2024-01-09T11:30:00.000Z"
+  },
+  {
+    "Id": 3,
+    "title": "Schedule product demo",
+    "description": "Arrange demo session with technical team and stakeholders",
+    "dueDate": "2024-01-20T15:00:00.000Z",
+    "priority": "medium",
+    "completed": false,
+    "entityType": "lead",
+    "entityId": 2,
+    "entityName": "TechStart Inc",
+    "createdAt": "2024-01-10T14:20:00.000Z"
+  },
+  {
+    "Id": 4,
+    "title": "Review quarterly results",
+    "description": "Go over Q4 performance metrics and plan Q1 strategy",
+    "dueDate": "2024-01-12T10:00:00.000Z",
+    "priority": "medium",
+    "completed": true,
+    "completedAt": "2024-01-11T16:30:00.000Z",
+    "entityType": null,
+    "entityId": null,
+    "entityName": null,
+    "createdAt": "2024-01-05T09:00:00.000Z"
+  }
+]

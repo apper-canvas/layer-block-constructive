@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { leadService } from "@/services/api/leadService";
+import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import Select from "@/components/atoms/Select";
+import Input from "@/components/atoms/Input";
 import LeadCard from "@/components/molecules/LeadCard";
 import LeadForm from "@/components/organisms/LeadForm";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import Empty from "@/components/ui/Empty";
-import Input from "@/components/atoms/Input";
-import Select from "@/components/atoms/Select";
 
 const Leads = () => {
   const [leads, setLeads] = useState([]);
@@ -52,7 +52,7 @@ const statusOptions = [
       setIsFormOpen(true);
     };
 
-    window.addEventListener("addButtonClick", handleAddButtonClick);
+window.addEventListener("addButtonClick", handleAddButtonClick);
     return () => window.removeEventListener("addButtonClick", handleAddButtonClick);
   }, []);
 
@@ -158,7 +158,7 @@ const statusOptions = [
       <LeadForm
         isOpen={isFormOpen}
         onClose={handleFormClose}
-        lead={editingLead}
+lead={editingLead}
         onSuccess={handleFormSuccess}
       />
     </div>

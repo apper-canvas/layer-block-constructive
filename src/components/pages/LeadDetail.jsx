@@ -1,16 +1,17 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { leadService } from "@/services/api/leadService";
 import { activityService } from "@/services/api/activityService";
+import TaskForm from "@/components/organisms/TaskForm";
+import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
 import Select from "@/components/atoms/Select";
-import ApperIcon from "@/components/ApperIcon";
-import StatusBadge from "@/components/molecules/StatusBadge";
+import Input from "@/components/atoms/Input";
 import ActivityLog from "@/components/molecules/ActivityLog";
+import StatusBadge from "@/components/molecules/StatusBadge";
 import ActivityForm from "@/components/organisms/ActivityForm";
 
 const LeadDetail = () => {
@@ -22,7 +23,8 @@ const LeadDetail = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [activities, setActivities] = useState([]);
-  const [isActivityFormOpen, setIsActivityFormOpen] = useState(false);
+const [isActivityFormOpen, setIsActivityFormOpen] = useState(false);
+  const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -44,7 +46,11 @@ const LeadDetail = () => {
   useEffect(() => {
     loadLead();
     loadActivities();
-  }, [id]);
+}, [id]);
+
+  function handleAddTask() {
+    setIsTaskFormOpen(true);
+  }
 
   const loadLead = async () => {
     try {
@@ -81,10 +87,9 @@ const LeadDetail = () => {
     }
   };
 
-  const handleActivitySuccess = () => {
+const handleActivitySuccess = () => {
     loadActivities();
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -145,7 +150,6 @@ const LeadDetail = () => {
   const handleAddActivity = () => {
     setIsActivityFormOpen(true);
   };
-
   if (loading) return <Loading />;
   if (error) return <Error message={error} onRetry={loadLead} />;
   if (!lead) return <Error message="Lead not found" />;
@@ -345,17 +349,31 @@ const LeadDetail = () => {
                 <ApperIcon name="Activity" size={20} className="text-gray-600" />
                 <h2 className="text-lg font-semibold text-gray-900">Activity Log</h2>
               </div>
-              <Button
-                onClick={handleAddActivity}
-                icon="Plus"
-                size="sm"
-              >
-                Log Activity
-              </Button>
+<div className="flex gap-2">
+                <Button
+                  onClick={handleAddActivity}
+                  icon="Plus"
+                  size="sm"
+                >
+                  Log Activity
+                </Button>
+                <Button onClick={handleAddTask} variant="secondary" size="sm">
+                  <ApperIcon name="Plus" size={18} />
+                  Add Task
+                </Button>
+              </div>
             </div>
             <ActivityLog activities={activities} />
           </div>
         )}
+        
+        {/* Task Form Modal */}
+<TaskForm
+          isOpen={isTaskFormOpen}
+          onClose={() => setIsTaskFormOpen(false)}
+          onSuccess={loadLead}
+          prefilledEntity={{ type: "lead", id: lead.id }}
+        />
       </div>
 
       {/* Activity Form Modal */}

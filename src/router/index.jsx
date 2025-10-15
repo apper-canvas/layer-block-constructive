@@ -8,6 +8,7 @@ const ContactDetail = lazy(() => import("@/components/pages/ContactDetail"));
 const Leads = lazy(() => import("@/components/pages/Leads"));
 const LeadDetail = lazy(() => import("@/components/pages/LeadDetail"));
 const Deals = lazy(() => import("@/components/pages/Deals"));
+const Tasks = lazy(() => import("@/components/pages/Tasks"));
 const DealDetail = lazy(() => import("@/components/pages/DealDetail"));
 const NotFound = lazy(() => import("@/components/pages/NotFound"));
 const mainRoutes = [
@@ -65,6 +66,14 @@ path: "leads/:id",
     element: (
       <Suspense fallback={<div>Loading.....</div>}>
         <DealDetail />
+      </Suspense>
+    )
+},
+  {
+    path: "tasks",
+    element: (
+      <Suspense fallback={<div>Loading.....</div>}>
+        <Tasks />
       </Suspense>
     )
   },

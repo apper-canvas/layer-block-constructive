@@ -7,7 +7,8 @@ const MobileSidebar = ({ isOpen, onClose, className = "" }) => {
     { name: "Dashboard", href: "", icon: "Home" },
     { name: "Contacts", href: "contacts", icon: "Users" },
 { name: "Leads", href: "leads", icon: "Target" },
-    { name: "Deals", href: "deals", icon: "Briefcase" }
+{ name: "Deals", href: "deals", icon: "Briefcase" },
+    { name: "Tasks", href: "tasks", icon: "CheckSquare" }
   ];
 
   if (!isOpen) return null;

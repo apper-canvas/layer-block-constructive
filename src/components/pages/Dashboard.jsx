@@ -1,20 +1,26 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { contactService } from "@/services/api/contactService";
 import { leadService } from "@/services/api/leadService";
 import { dealService } from "@/services/api/dealService";
 import { activityService } from "@/services/api/activityService";
-import MetricCard from "@/components/molecules/MetricCard";
+import Chart from "react-apexcharts";
+import { addDays, format, isAfter, isBefore, isPast } from "date-fns";
+import { taskService } from "@/services/api/taskService";
+import { useNavigate } from "react-router-dom";
+import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
-import ApperIcon from "@/components/ApperIcon";
-import Chart from "react-apexcharts";
-import { format, isAfter, isBefore, addDays } from "date-fns";
+import Leads from "@/components/pages/Leads";
+import Deals from "@/components/pages/Deals";
+import MetricCard from "@/components/molecules/MetricCard";
 
 const Dashboard = () => {
   const [contacts, setContacts] = useState([]);
   const [leads, setLeads] = useState([]);
   const [deals, setDeals] = useState([]);
-  const [activities, setActivities] = useState([]);
+const [activities, setActivities] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -23,10 +29,11 @@ const loadData = async () => {
       setLoading(true);
       setError("");
       
-      const [contactsData, leadsData, dealsData] = await Promise.all([
+const [contactsData, leadsData, dealsData, tasksData] = await Promise.all([
         contactService.getAll(),
         leadService.getAll(),
-        dealService.getAll()
+        dealService.getAll(),
+        taskService.getAll()
       ]);
       
       // Aggregate activities from contacts and leads
@@ -52,8 +59,9 @@ const loadData = async () => {
       
       setContacts(contactsData);
       setLeads(leadsData);
-      setDeals(dealsData);
+setDeals(dealsData);
       setActivities(allActivities);
+      setTasks(tasksData);
     } catch (err) {
       setError("Failed to load dashboard data");
     } finally {
@@ -94,7 +102,23 @@ if (loading) return <Loading />;
       return isAfter(activityDate, today) && isBefore(activityDate, addDays(today, 7));
     })
     .sort((a, b) => new Date(a.date) - new Date(b.date))
+.slice(0, 5);
+
+  // Get overdue tasks
+  const overdueTasks = tasks
+    .filter(task => !task.completed && isPast(new Date(task.dueDate)))
+    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
     .slice(0, 5);
+
+  async function handleMarkTaskComplete(taskId) {
+    try {
+      await taskService.markComplete(taskId);
+      toast.success("Task marked as complete");
+      loadData();
+    } catch (error) {
+      toast.error("Failed to complete task");
+    }
+  }
 
   const chartOptions = {
     chart: {
@@ -165,8 +189,8 @@ if (loading) return <Loading />;
         </div>
       </div>
 
-      {/* Metrics Grid */}
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+{/* Metrics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
         <MetricCard
           label="Total Contacts"
           value={contacts.length}
@@ -187,9 +211,17 @@ if (loading) return <Loading />;
           value={`$${(activeDealValue / 1000).toFixed(0)}K`}
           icon="TrendingUp"
         />
+        {/* Overdue Tasks Metric */}
+        <MetricCard
+          label="Overdue Tasks"
+          value={tasks.filter(t => !t.completed && isPast(new Date(t.dueDate))).length}
+          icon="AlertTriangle"
+          trend="urgent"
+          trendValue="Requires attention"
+          className="bg-gradient-to-br from-red-50 to-orange-50 border-red-200"
+        />
       </div>
-
-{/* Charts and Visual Analytics */}
+      {/* Charts and Visual Analytics */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Leads by Status</h3>
@@ -272,30 +304,51 @@ if (loading) return <Loading />;
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+<div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Upcoming Follow-ups</h3>
-            <ApperIcon name="Calendar" size={20} className="text-gray-400" />
+            <h3 className="text-lg font-semibold text-gray-900">Overdue Tasks</h3>
+            <button
+              onClick={() => navigate("/tasks")}
+              className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1"
+            >
+              View All
+              <ApperIcon name="ArrowRight" size={14} />
+            </button>
           </div>
           <div className="space-y-3">
-            {upcomingFollowUps.length > 0 ? (
-              upcomingFollowUps.map((activity) => (
-                <div key={activity.Id} className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg border border-orange-100">
-                  <div className="flex-shrink-0 mt-1">
-                    <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
-                      <ApperIcon name="Clock" size={16} className="text-orange-600" />
+            {overdueTasks.length > 0 ? (
+              overdueTasks.map((task) => (
+                <div key={task.Id} className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
+                  <button
+                    onClick={() => handleMarkTaskComplete(task.Id)}
+                    className="flex-shrink-0 w-5 h-5 rounded border-2 border-red-400 flex items-center justify-center transition-all mt-0.5 hover:bg-red-400 hover:border-red-500"
+                  >
+                  </button>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{task.title}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-xs text-red-600 font-medium">
+                        Due: {format(new Date(task.dueDate), "MMM d, yyyy")}
+                      </p>
+                      {task.entityName && (
+                        <>
+                          <span className="text-xs text-gray-400">•</span>
+                          <p className="text-xs text-gray-600">{task.entityName}</p>
+                        </>
+                      )}
                     </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{activity.title}</p>
-                    <p className="text-xs text-orange-600 font-medium mt-1">
-                      {format(new Date(activity.date), "MMM d, yyyy")} at {format(new Date(activity.date), "h:mm a")}
-                    </p>
-                  </div>
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium bg-red-100 text-red-700 border border-red-200">
+                    {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                  </span>
                 </div>
               ))
             ) : (
-              <p className="text-sm text-gray-400 text-center py-8">No upcoming follow-ups</p>
+              <div className="text-center py-8">
+                <ApperIcon name="CheckCircle2" size={48} className="text-green-500 mx-auto mb-2" />
+                <p className="text-sm text-gray-600 font-medium">All caught up!</p>
+                <p className="text-xs text-gray-400 mt-1">No overdue tasks</p>
+              </div>
             )}
           </div>
         </div>

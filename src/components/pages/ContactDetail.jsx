@@ -3,14 +3,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { contactService } from "@/services/api/contactService";
 import { activityService } from "@/services/api/activityService";
-import ActivityLog from "@/components/molecules/ActivityLog";
-import ActivityForm from "@/components/organisms/ActivityForm";
+import TaskForm from "@/components/organisms/TaskForm";
 import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Contacts from "@/components/pages/Contacts";
 import Button from "@/components/atoms/Button";
 import Input from "@/components/atoms/Input";
+import ActivityLog from "@/components/molecules/ActivityLog";
+import ActivityForm from "@/components/organisms/ActivityForm";
 const ContactDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -20,7 +21,8 @@ const [contact, setContact] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [activities, setActivities] = useState([]);
-  const [isActivityFormOpen, setIsActivityFormOpen] = useState(false);
+const [isActivityFormOpen, setIsActivityFormOpen] = useState(false);
+  const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -35,7 +37,9 @@ useEffect(() => {
     loadContact();
     loadActivities();
   }, [id]);
-
+function handleAddTask() {
+    setIsTaskFormOpen(true);
+  }
 const loadContact = async () => {
     try {
       setLoading(true);
@@ -71,7 +75,10 @@ const loadContact = async () => {
   const handleActivitySuccess = () => {
     loadActivities();
   };
-
+<Button onClick={handleAddTask} variant="secondary">
+            <ApperIcon name="Plus" size={18} />
+            Add Task
+          </Button>
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -117,7 +124,7 @@ const loadContact = async () => {
   const handleAddActivity = () => {
     setIsActivityFormOpen(true);
   };
-  if (loading) return <Loading />;
+if (loading) return <Loading />;
   if (error) return <Error message={error} />;
   if (!contact) return <Error message="Contact not found" />;
 
@@ -293,7 +300,7 @@ const loadContact = async () => {
           )}
         </div>
 
-        {/* Action Buttons */}
+{/* Action Buttons */}
         {isEditing && (
           <div className="flex gap-3 justify-end pt-6 border-t border-gray-200">
             <Button onClick={handleCancel} variant="secondary" disabled={saving}>
@@ -303,28 +310,36 @@ const loadContact = async () => {
               {saving ? "Saving..." : "Save Changes"}
             </Button>
           </div>
-)}
-
-        {/* Activities Section */}
-        {!isEditing && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
-                <ApperIcon name="Activity" size={20} className="text-gray-600" />
-                <h2 className="text-lg font-semibold text-gray-900">Activity Log</h2>
-              </div>
-              <Button
-                onClick={handleAddActivity}
-                icon="Plus"
-                size="sm"
-              >
-                Log Activity
-              </Button>
-            </div>
-            <ActivityLog activities={activities} />
-          </div>
         )}
       </div>
+
+      {/* Activities Section */}
+      {!isEditing && (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mt-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <ApperIcon name="Activity" size={20} className="text-gray-600" />
+              <h2 className="text-lg font-semibold text-gray-900">Activity Log</h2>
+            </div>
+            <Button
+              onClick={handleAddActivity}
+              icon="Plus"
+              size="sm"
+            >
+              Log Activity
+            </Button>
+          </div>
+          <ActivityLog activities={activities} />
+        </div>
+      )}
+
+      {/* Task Form Modal */}
+      <TaskForm
+        isOpen={isTaskFormOpen}
+        onClose={() => setIsTaskFormOpen(false)}
+        onSuccess={loadContact}
+        prefilledEntity={{ type: "contact", id: contact?.id }}
+      />
 
       {/* Activity Form Modal */}
       <ActivityForm
@@ -334,7 +349,7 @@ const loadContact = async () => {
         entityId={id}
         onSuccess={handleActivitySuccess}
       />
-</div>
+    </div>
   );
 };
 
