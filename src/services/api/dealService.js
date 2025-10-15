@@ -8,6 +8,36 @@ export const dealService = {
     return [...deals];
   },
 
+  getFiltered: async (filters) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    let filtered = [...deals];
+
+    if (filters.dateRange?.start) {
+      filtered = filtered.filter(deal => new Date(deal.createdAt) >= new Date(filters.dateRange.start));
+    }
+    if (filters.dateRange?.end) {
+      filtered = filtered.filter(deal => new Date(deal.createdAt) <= new Date(filters.dateRange.end));
+    }
+    if (filters.valueRange?.min !== undefined) {
+      filtered = filtered.filter(deal => deal.value >= filters.valueRange.min);
+    }
+    if (filters.valueRange?.max !== undefined) {
+      filtered = filtered.filter(deal => deal.value <= filters.valueRange.max);
+    }
+    if (filters.lastContactDate) {
+      filtered = filtered.filter(deal => deal.lastContactDate && new Date(deal.lastContactDate) >= new Date(filters.lastContactDate));
+    }
+    if (filters.customFields && Object.keys(filters.customFields).length > 0) {
+      filtered = filtered.filter(deal => {
+        return Object.entries(filters.customFields).every(([key, value]) => {
+          return deal[key] && deal[key].toString().toLowerCase().includes(value.toLowerCase());
+        });
+      });
+    }
+
+    return filtered;
+  },
+
   getById: async (id) => {
     await new Promise(resolve => setTimeout(resolve, 200));
     const deal = deals.find(d => d.Id === parseInt(id));

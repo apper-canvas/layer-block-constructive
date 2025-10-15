@@ -5,6 +5,7 @@ import DealCard from "@/components/molecules/DealCard";
 import KanbanColumn from "@/components/molecules/KanbanColumn";
 import KanbanCard from "@/components/molecules/KanbanCard";
 import DealForm from "@/components/organisms/DealForm";
+import FilterPanel from "@/components/molecules/FilterPanel";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
@@ -23,6 +24,17 @@ const [deals, setDeals] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedDeal, setSelectedDeal] = useState(null);
   const [draggedDeal, setDraggedDeal] = useState(null);
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({
+    dateRange: { start: "", end: "" },
+    valueRange: { min: "", max: "" },
+    lastContactDate: "",
+    customFields: {}
+  });
+  const [filterPresets, setFilterPresets] = useState(() => {
+    const saved = localStorage.getItem('dealFilterPresets');
+    return saved ? JSON.parse(saved) : [];
+  });
   useEffect(() => {
     loadDeals();
     
@@ -35,30 +47,84 @@ const [deals, setDeals] = useState([]);
     return () => window.removeEventListener("addButtonClick", handleAddButton);
   }, []);
 
-  useEffect(() => {
+useEffect(() => {
+    applyFilters();
+  }, [deals, searchTerm, stageFilter, activeFilters]);
+
+  async function applyFilters() {
     let filtered = [...deals];
-    
+
+    const hasAdvancedFilters = 
+      activeFilters.dateRange.start ||
+      activeFilters.dateRange.end ||
+      activeFilters.valueRange.min ||
+      activeFilters.valueRange.max ||
+      activeFilters.lastContactDate ||
+      Object.keys(activeFilters.customFields).length > 0;
+
+    if (hasAdvancedFilters) {
+      try {
+        const advancedFiltered = await dealService.getFiltered(activeFilters);
+        filtered = advancedFiltered;
+      } catch (err) {
+        console.error("Filter error:", err);
+      }
+    }
+
     if (searchTerm) {
       filtered = filtered.filter(deal =>
         deal.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         deal.notes?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    
+
     if (stageFilter !== "all") {
       filtered = filtered.filter(deal => deal.stage === stageFilter);
     }
-    
-    setFilteredDeals(filtered);
-  }, [deals, searchTerm, stageFilter]);
 
-  async function loadDeals() {
+    setFilteredDeals(filtered);
+  }
+
+  function handleApplyFilters(filters) {
+    setActiveFilters(filters);
+    setIsFilterPanelOpen(false);
+  }
+
+  function handleSavePreset(name, filters) {
+    const newPreset = { name, filters };
+    const updated = [...filterPresets, newPreset];
+    setFilterPresets(updated);
+    localStorage.setItem('dealFilterPresets', JSON.stringify(updated));
+    toast.success(`Preset "${name}" saved`);
+  }
+
+  function handleLoadPreset(preset) {
+    setActiveFilters(preset.filters);
+    toast.success(`Preset "${preset.name}" loaded`);
+  }
+
+  function handleDeletePreset(name) {
+    const updated = filterPresets.filter(p => p.name !== name);
+    setFilterPresets(updated);
+    localStorage.setItem('dealFilterPresets', JSON.stringify(updated));
+    toast.success(`Preset "${name}" deleted`);
+  }
+
+  function getActiveFilterCount() {
+    let count = 0;
+    if (activeFilters.dateRange.start || activeFilters.dateRange.end) count++;
+    if (activeFilters.valueRange.min || activeFilters.valueRange.max) count++;
+    if (activeFilters.lastContactDate) count++;
+    count += Object.keys(activeFilters.customFields).length;
+    return count;
+  }
+
+async function loadDeals() {
     try {
       setLoading(true);
       setError(null);
       const data = await dealService.getAll();
       setDeals(data);
-      setFilteredDeals(data);
     } catch (err) {
       setError(err.message || "Failed to load deals");
       toast.error("Failed to load deals");
@@ -154,7 +220,7 @@ return (
         </div>
       </div>
 
-      <div className="mb-6 flex flex-col sm:flex-row gap-4">
+<div className="mb-6 flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <Input
             type="text"
@@ -181,7 +247,31 @@ return (
             </Select>
           </div>
         )}
+        <Button
+          variant="outline"
+          onClick={() => setIsFilterPanelOpen(true)}
+          className="flex items-center gap-2 relative"
+        >
+          <ApperIcon name="Filter" size={16} />
+          Filters
+          {getActiveFilterCount() > 0 && (
+            <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+              {getActiveFilterCount()}
+            </span>
+          )}
+        </Button>
       </div>
+
+      <FilterPanel
+        isOpen={isFilterPanelOpen}
+        onClose={() => setIsFilterPanelOpen(false)}
+        onApplyFilters={handleApplyFilters}
+        activeFilters={activeFilters}
+        presets={filterPresets}
+        onSavePreset={handleSavePreset}
+        onLoadPreset={handleLoadPreset}
+        onDeletePreset={handleDeletePreset}
+      />
 
       {viewMode === "list" ? (
         filteredDeals.length === 0 ? (
