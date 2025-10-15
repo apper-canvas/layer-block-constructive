@@ -28,7 +28,7 @@ const Select = React.forwardRef(({
         ref={ref}
         id={selectId}
         className={cn(
-          "block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm bg-white",
+          "block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900",
           "focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary",
           "transition-colors duration-200",
           "disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed",
