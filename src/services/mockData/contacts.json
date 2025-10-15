@@ -1,0 +1,42 @@
+[
+  {
+    "Id": 1,
+    "name": "Sarah Johnson",
+    "email": "sarah.johnson@techcorp.com",
+    "phone": "(555) 123-4567",
+    "company": "TechCorp Solutions",
+    "createdAt": "2024-01-15T10:30:00Z"
+  },
+  {
+    "Id": 2,
+    "name": "Michael Chen",
+    "email": "m.chen@innovate.co",
+    "phone": "(555) 987-6543",
+    "company": "Innovate Co",
+    "createdAt": "2024-01-18T14:20:00Z"
+  },
+  {
+    "Id": 3,
+    "name": "Emily Rodriguez",
+    "email": "emily.r@startuplab.io",
+    "phone": "(555) 456-7890",
+    "company": "StartupLab",
+    "createdAt": "2024-01-22T09:15:00Z"
+  },
+  {
+    "Id": 4,
+    "name": "David Thompson",
+    "email": "d.thompson@megacorp.com",
+    "phone": "(555) 321-9876",
+    "company": "MegaCorp Industries",
+    "createdAt": "2024-01-25T16:45:00Z"
+  },
+  {
+    "Id": 5,
+    "name": "Lisa Wang",
+    "email": "lisa.wang@cloudtech.net",
+    "phone": "(555) 654-3210",
+    "company": "CloudTech Networks",
+    "createdAt": "2024-01-28T11:30:00Z"
+  }
+]

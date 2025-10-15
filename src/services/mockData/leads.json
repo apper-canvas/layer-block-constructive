@@ -1,0 +1,52 @@
+[
+  {
+    "Id": 1,
+    "name": "Alex Martinez",
+    "email": "alex@fastgrow.com",
+    "phone": "(555) 111-2222",
+    "company": "FastGrow Marketing",
+    "status": "New",
+    "notes": "Interested in enterprise package",
+    "createdAt": "2024-01-20T09:00:00Z"
+  },
+  {
+    "Id": 2,
+    "name": "Jennifer Lee",
+    "email": "jen.lee@retailplus.com",
+    "phone": "(555) 333-4444",
+    "company": "RetailPlus",
+    "status": "Contacted",
+    "notes": "Had initial call, needs pricing information",
+    "createdAt": "2024-01-23T13:30:00Z"
+  },
+  {
+    "Id": 3,
+    "name": "Robert Kim",
+    "email": "r.kim@financetech.org",
+    "phone": "(555) 555-6666",
+    "company": "FinanceTech Solutions",
+    "status": "Qualified",
+    "notes": "Ready to move forward with proposal",
+    "createdAt": "2024-01-26T10:15:00Z"
+  },
+  {
+    "Id": 4,
+    "name": "Amanda Davis",
+    "email": "amanda@healthsys.net",
+    "phone": "(555) 777-8888",
+    "company": "HealthSys Network",
+    "status": "Lost",
+    "notes": "Went with competitor due to budget constraints",
+    "createdAt": "2024-01-29T15:20:00Z"
+  },
+  {
+    "Id": 5,
+    "name": "Carlos Rodriguez",
+    "email": "carlos@edutech.edu",
+    "phone": "(555) 999-0000",
+    "company": "EduTech University",
+    "status": "New",
+    "notes": "Referral from existing client",
+    "createdAt": "2024-02-01T08:45:00Z"
+  }
+]
