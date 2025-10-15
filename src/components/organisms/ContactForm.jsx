@@ -9,13 +9,13 @@ import Modal from "@/components/molecules/Modal";
 
 const ContactForm = ({ isOpen, onClose, contact = null, onSuccess }) => {
   const [formData, setFormData] = useState({
-    name: contact?.name || "",
-    email: contact?.email || "",
-    phone: contact?.phone || "",
-    companyId: contact?.companyId || "",
-    jobTitle: contact?.jobTitle || "",
-    address: contact?.address || { street: "", city: "", state: "", zip: "" },
-    notes: contact?.notes || ""
+    name: "",
+    email: "",
+    phone: "",
+    companyId: "",
+    jobTitle: "",
+    address: { street: "", city: "", state: "", zip: "" },
+    notes: ""
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -41,6 +41,30 @@ const ContactForm = ({ isOpen, onClose, contact = null, onSuccess }) => {
       fetchCompanies();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (contact) {
+      setFormData({
+        name: contact.name || "",
+        email: contact.email || "",
+        phone: contact.phone || "",
+        companyId: contact.companyId || "",
+        jobTitle: contact.jobTitle || "",
+        address: contact.address || { street: "", city: "", state: "", zip: "" },
+        notes: contact.notes || ""
+      });
+    } else {
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        companyId: "",
+        jobTitle: "",
+        address: { street: "", city: "", state: "", zip: "" },
+        notes: ""
+      });
+    }
+  }, [contact, isOpen]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));

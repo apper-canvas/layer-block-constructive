@@ -1,24 +1,25 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
-import Select from "@/components/atoms/Select";
-import Modal from "@/components/molecules/Modal";
 import { leadService } from "@/services/api/leadService";
+import { create, update } from "@/services/api/taskService";
+import Button from "@/components/atoms/Button";
+import Select from "@/components/atoms/Select";
+import Input from "@/components/atoms/Input";
+import Modal from "@/components/molecules/Modal";
 
 const LeadForm = ({ isOpen, onClose, lead = null, onSuccess }) => {
   const [formData, setFormData] = useState({
-    name: lead?.name || "",
-    email: lead?.email || "",
-    phone: lead?.phone || "",
-    company: lead?.company || "",
-    status: lead?.status || "New",
-    notes: lead?.notes || ""
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    status: "New",
+    notes: ""
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-const statusOptions = [
+  const statusOptions = [
     { value: "New", label: "New" },
     { value: "Qualified", label: "Qualified" },
     { value: "Proposal", label: "Proposal" },
@@ -26,6 +27,28 @@ const statusOptions = [
     { value: "Won", label: "Won" },
     { value: "Lost", label: "Lost" }
   ];
+
+  useEffect(() => {
+    if (lead) {
+      setFormData({
+        name: lead.name || "",
+        email: lead.email || "",
+        phone: lead.phone || "",
+        company: lead.company || "",
+        status: lead.status || "New",
+        notes: lead.notes || ""
+      });
+    } else {
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        status: "New",
+        notes: ""
+      });
+    }
+  }, [lead, isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

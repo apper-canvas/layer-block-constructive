@@ -1,28 +1,43 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
-import Select from "@/components/atoms/Select";
-import Modal from "@/components/molecules/Modal";
 import { dealService } from "@/services/api/dealService";
 import { contactService } from "@/services/api/contactService";
-
+import { create, getAll, update } from "@/services/api/taskService";
+import Button from "@/components/atoms/Button";
+import Select from "@/components/atoms/Select";
+import Input from "@/components/atoms/Input";
+import Modal from "@/components/molecules/Modal";
 const DealForm = ({ isOpen, onClose, deal = null, onSuccess }) => {
+  const [companies, setCompanies] = useState([]);
   const [contacts, setContacts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [loadingData, setLoadingData] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
+  
+  const statusOptions = [
+    { value: "Prospect", label: "Prospect" },
+    { value: "Qualified", label: "Qualified" },
+    { value: "Proposal", label: "Proposal" },
+    { value: "Negotiation", label: "Negotiation" },
+    { value: "Won", label: "Won" },
+    { value: "Lost", label: "Lost" }
+  ];
+  
   const [formData, setFormData] = useState({
     name: "",
     value: "",
     closeDate: "",
-    stage: "New",
+    status: "Prospect",
+    companyId: "",
     contactId: "",
     notes: ""
   });
-  const [errors, setErrors] = useState({});
-  const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
+useEffect(() => {
     if (isOpen) {
       loadContacts();
+      
       if (deal) {
         setFormData({
           name: deal.name || "",
@@ -49,9 +64,10 @@ const DealForm = ({ isOpen, onClose, deal = null, onSuccess }) => {
   async function loadContacts() {
     try {
       const data = await contactService.getAll();
-      setContacts(data);
+      setContacts(data || []);
     } catch (err) {
       toast.error("Failed to load contacts");
+      setContacts([]);
     }
   }
 
@@ -170,19 +186,18 @@ const DealForm = ({ isOpen, onClose, deal = null, onSuccess }) => {
           required
         />
 
-        <Select
-          label="Stage"
+<Select
+          label="Status"
           name="stage"
           value={formData.stage}
           onChange={handleChange}
           required
         >
-          <option value="New">New</option>
-          <option value="Contacted">Contacted</option>
-          <option value="Qualified">Qualified</option>
-          <option value="Proposal">Proposal</option>
-          <option value="Closed Won">Closed Won</option>
-          <option value="Closed Lost">Closed Lost</option>
+          {statusOptions.map(option => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </Select>
 
         <Select
