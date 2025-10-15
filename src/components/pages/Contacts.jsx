@@ -8,16 +8,15 @@ import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
 import Input from "@/components/atoms/Input";
 import Button from "@/components/atoms/Button";
-
+import { useNavigate } from "react-router-dom";
 const Contacts = () => {
+const navigate = useNavigate();
   const [contacts, setContacts] = useState([]);
   const [filteredContacts, setFilteredContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingContact, setEditingContact] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-
   const loadContacts = async () => {
     try {
       setLoading(true);
@@ -54,10 +53,6 @@ const Contacts = () => {
     setFilteredContacts(filtered);
   }, [searchTerm, contacts]);
 
-  const handleEdit = (contact) => {
-    setEditingContact(contact);
-    setIsFormOpen(true);
-  };
 
   const handleDelete = async (contactId) => {
     if (!window.confirm("Are you sure you want to delete this contact?")) {
@@ -73,9 +68,8 @@ const Contacts = () => {
     }
   };
 
-  const handleFormClose = () => {
+const handleFormClose = () => {
     setIsFormOpen(false);
-    setEditingContact(null);
   };
 
   const handleFormSuccess = () => {
@@ -85,7 +79,7 @@ const Contacts = () => {
   if (loading) return <Loading />;
   if (error) return <Error message={error} onRetry={loadContacts} />;
 
-  return (
+return (
     <div className="p-6">
       {/* Search and Filters */}
       <div className="mb-6">
@@ -119,7 +113,6 @@ const Contacts = () => {
             <ContactCard
               key={contact.Id}
               contact={contact}
-              onEdit={handleEdit}
               onDelete={handleDelete}
             />
           ))}
@@ -130,7 +123,6 @@ const Contacts = () => {
       <ContactForm
         isOpen={isFormOpen}
         onClose={handleFormClose}
-        contact={editingContact}
         onSuccess={handleFormSuccess}
       />
     </div>

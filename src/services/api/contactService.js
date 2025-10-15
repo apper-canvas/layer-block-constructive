@@ -15,11 +15,14 @@ export const contactService = {
   },
 
   create: async (contactData) => {
-    await new Promise(resolve => setTimeout(resolve, 400));
+await new Promise(resolve => setTimeout(resolve, 400));
     const highestId = Math.max(...contacts.map(c => c.Id), 0);
     const newContact = {
       Id: highestId + 1,
       ...contactData,
+      jobTitle: contactData.jobTitle || "",
+      address: contactData.address || { street: "", city: "", state: "", zip: "" },
+      notes: contactData.notes || "",
       createdAt: new Date().toISOString()
     };
     contacts.push(newContact);
@@ -30,8 +33,13 @@ export const contactService = {
     await new Promise(resolve => setTimeout(resolve, 400));
     const index = contacts.findIndex(c => c.Id === parseInt(id));
     if (index === -1) return null;
-    
-    contacts[index] = { ...contacts[index], ...contactData };
+contacts[index] = { 
+      ...contacts[index], 
+      ...contactData,
+      jobTitle: contactData.jobTitle || contacts[index].jobTitle || "",
+      address: contactData.address || contacts[index].address || { street: "", city: "", state: "", zip: "" },
+      notes: contactData.notes || contacts[index].notes || ""
+    };
     return { ...contacts[index] };
   },
 
