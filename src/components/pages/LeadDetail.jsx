@@ -98,7 +98,15 @@ const handleActivitySuccess = () => {
     }));
   };
 
-  const handleEdit = () => {
+const handleEdit = () => {
+    setFormData({
+      name: lead.name || "",
+      email: lead.email || "",
+      phone: lead.phone || "",
+      company: lead.company || "",
+      status: lead.status || "New",
+      notes: lead.notes || ""
+    });
     setIsEditing(true);
   };
 

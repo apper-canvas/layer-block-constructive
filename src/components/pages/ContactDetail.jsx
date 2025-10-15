@@ -189,7 +189,18 @@ if (loading) return <Loading />;
           <span>Back to Contacts</span>
         </button>
         {!isEditing && (
-          <Button onClick={() => setIsEditing(true)} variant="primary">
+<Button onClick={() => {
+            setFormData({
+              name: contact.name || "",
+              email: contact.email || "",
+              phone: contact.phone || "",
+              company: contact.company || "",
+              jobTitle: contact.jobTitle || "",
+              address: contact.address || { street: "", city: "", state: "", zip: "" },
+              notes: contact.notes || ""
+            });
+            setIsEditing(true);
+          }} variant="primary">
             <ApperIcon name="Edit" size={16} />
             Edit Contact
           </Button>

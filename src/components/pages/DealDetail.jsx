@@ -195,10 +195,20 @@ value: parseFloat(editedDeal.value),
             <p className="text-gray-600 mt-1">Deal Details</p>
           </div>
         </div>
-        {!isEditing && (
+{!isEditing && (
           <Button
             icon="Edit2"
-            onClick={() => setIsEditing(true)}
+            onClick={() => {
+              setEditedDeal({
+                name: deal.name,
+                value: deal.value,
+                closeDate: deal.closeDate,
+                stage: deal.stage,
+                contactId: deal.contactId,
+                notes: deal.notes
+              });
+              setIsEditing(true);
+            }}
           >
             Edit Deal
           </Button>
