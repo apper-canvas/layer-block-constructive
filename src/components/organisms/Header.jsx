@@ -6,17 +6,14 @@ import Button from "@/components/atoms/Button";
 const Header = ({ onMenuClick, onAddClick, className = "" }) => {
   const location = useLocation();
   
-  const getPageTitle = () => {
-    switch (location.pathname) {
-      case "/":
-        return "Dashboard";
-      case "/contacts":
-        return "Contacts";
-      case "/leads":
-        return "Leads";
-      default:
-        return "CRM Pro";
-    }
+const getPageTitle = () => {
+    const path = location.pathname;
+    if (path === "/") return "Dashboard";
+    if (path === "/contacts") return "Contacts";
+    if (path === "/leads") return "Leads";
+    if (path.startsWith("/contacts/")) return "Contact Details";
+    if (path.startsWith("/leads/")) return "Lead Details";
+    return "CRM Pro";
   };
 
   const showAddButton = location.pathname === "/contacts" || location.pathname === "/leads";

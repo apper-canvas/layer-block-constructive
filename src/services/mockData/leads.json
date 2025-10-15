@@ -7,9 +7,23 @@
     "company": "FastGrow Marketing",
     "status": "Proposal",
     "notes": "Sent detailed proposal for enterprise package, awaiting feedback",
+    "activities": [
+      {
+        "Id": 1,
+        "type": "email",
+        "date": "2024-02-10T09:30:00Z",
+        "notes": "Sent customized proposal with pricing breakdown and implementation timeline."
+      },
+      {
+        "Id": 2,
+        "type": "call",
+        "date": "2024-02-07T14:15:00Z",
+        "notes": "Discovery call to understand marketing automation needs and current pain points."
+      }
+    ],
     "createdAt": "2024-01-20T09:00:00Z"
   },
-  {
+{
     "Id": 2,
     "name": "Jennifer Lee",
     "email": "jen.lee@retailplus.com",
@@ -17,9 +31,23 @@
     "company": "RetailPlus",
     "status": "Qualified",
     "notes": "Budget approved, ready for proposal stage",
+    "activities": [
+      {
+        "Id": 1,
+        "type": "meeting",
+        "date": "2024-02-11T11:00:00Z",
+        "notes": "Budget approval meeting with finance team. Green light for Q1 implementation."
+      },
+      {
+        "Id": 2,
+        "type": "call",
+        "date": "2024-02-08T16:00:00Z",
+        "notes": "Qualification call confirmed decision-making authority and budget availability."
+      }
+    ],
     "createdAt": "2024-01-23T13:30:00Z"
   },
-  {
+{
     "Id": 3,
     "name": "Robert Kim",
     "email": "r.kim@financetech.org",
@@ -27,9 +55,29 @@
     "company": "FinanceTech Solutions",
     "status": "Negotiation",
     "notes": "Discussing terms and pricing adjustments",
+    "activities": [
+      {
+        "Id": 1,
+        "type": "email",
+        "date": "2024-02-12T13:45:00Z",
+        "notes": "Sent revised pricing proposal with volume discount for 3-year commitment."
+      },
+      {
+        "Id": 2,
+        "type": "meeting",
+        "date": "2024-02-09T10:30:00Z",
+        "notes": "Negotiation session with procurement team. Discussed payment terms and SLA requirements."
+      },
+      {
+        "Id": 3,
+        "type": "call",
+        "date": "2024-02-06T15:00:00Z",
+        "notes": "Initial pricing discussion. Robert requested competitive analysis and flexible payment options."
+      }
+    ],
     "createdAt": "2024-01-26T10:15:00Z"
   },
-  {
+{
     "Id": 4,
     "name": "Amanda Davis",
     "email": "amanda@healthsys.net",
@@ -37,9 +85,23 @@
     "company": "HealthSys Network",
     "status": "Lost",
     "notes": "Went with competitor due to budget constraints",
+    "activities": [
+      {
+        "Id": 1,
+        "type": "email",
+        "date": "2024-02-13T09:00:00Z",
+        "notes": "Received notification that they chose competitor. Thanked for opportunity and requested feedback."
+      },
+      {
+        "Id": 2,
+        "type": "call",
+        "date": "2024-02-05T14:30:00Z",
+        "notes": "Final pricing discussion. Amanda indicated budget challenges but appreciated our solution."
+      }
+    ],
     "createdAt": "2024-01-29T15:20:00Z"
   },
-  {
+{
     "Id": 5,
     "name": "Carlos Rodriguez",
     "email": "carlos@edutech.edu",
@@ -47,6 +109,14 @@
     "company": "EduTech University",
     "status": "New",
     "notes": "Referral from existing client",
+    "activities": [
+      {
+        "Id": 1,
+        "type": "email",
+        "date": "2024-02-14T10:15:00Z",
+        "notes": "Sent welcome email with case study from referral client and scheduling link for intro call."
+      }
+    ],
     "createdAt": "2024-02-01T08:45:00Z"
   }
 ]

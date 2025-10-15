@@ -1,6 +1,6 @@
 import leadsData from "@/services/mockData/leads.json";
 
-let leads = [...leadsData];
+let leads = [...leadsData].map(l => ({ ...l, activities: l.activities || [] }));
 
 export const leadService = {
   getAll: async () => {
@@ -10,8 +10,8 @@ export const leadService = {
 
   getById: async (id) => {
     await new Promise(resolve => setTimeout(resolve, 200));
-    const lead = leads.find(l => l.Id === parseInt(id));
-    return lead ? { ...lead } : null;
+const lead = leads.find(l => l.Id === parseInt(id));
+    return lead ? { ...lead, activities: lead.activities || [] } : null;
   },
 
   create: async (leadData) => {
@@ -19,7 +19,8 @@ export const leadService = {
     const highestId = Math.max(...leads.map(l => l.Id), 0);
     const newLead = {
       Id: highestId + 1,
-      ...leadData,
+...leadData,
+      activities: leadData.activities || [],
       createdAt: new Date().toISOString()
     };
     leads.push(newLead);
@@ -31,7 +32,11 @@ export const leadService = {
     const index = leads.findIndex(l => l.Id === parseInt(id));
     if (index === -1) return null;
     
-    leads[index] = { ...leads[index], ...leadData };
+leads[index] = { 
+      ...leads[index], 
+      ...leadData,
+      activities: leadData.activities || leads[index].activities || []
+    };
     return { ...leads[index] };
   },
 
@@ -42,5 +47,7 @@ export const leadService = {
     
     leads.splice(index, 1);
     return true;
-  }
+}
 };
+
+export { leadService };

@@ -1,21 +1,26 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { contactService } from "@/services/api/contactService";
+import { activityService } from "@/services/api/activityService";
+import ActivityLog from "@/components/molecules/ActivityLog";
+import ActivityForm from "@/components/organisms/ActivityForm";
+import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
+import Contacts from "@/components/pages/Contacts";
 import Button from "@/components/atoms/Button";
 import Input from "@/components/atoms/Input";
-import ApperIcon from "@/components/ApperIcon";
-
 const ContactDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [contact, setContact] = useState(null);
+const [contact, setContact] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [activities, setActivities] = useState([]);
+  const [isActivityFormOpen, setIsActivityFormOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -26,11 +31,12 @@ const ContactDetail = () => {
     notes: ""
   });
 
-  useEffect(() => {
+useEffect(() => {
     loadContact();
+    loadActivities();
   }, [id]);
 
-  const loadContact = async () => {
+const loadContact = async () => {
     try {
       setLoading(true);
       setError("");
@@ -51,6 +57,19 @@ const ContactDetail = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadActivities = async () => {
+    try {
+      const data = await activityService.getActivitiesByEntityId('contact', id);
+      setActivities(data);
+    } catch (err) {
+      console.error("Failed to load activities:", err);
+    }
+  };
+
+  const handleActivitySuccess = () => {
+    loadActivities();
   };
 
   const handleChange = (e) => {
@@ -93,8 +112,11 @@ const ContactDetail = () => {
       notes: contact.notes || ""
     });
     setIsEditing(false);
-  };
+};
 
+  const handleAddActivity = () => {
+    setIsActivityFormOpen(true);
+  };
   if (loading) return <Loading />;
   if (error) return <Error message={error} />;
   if (!contact) return <Error message="Contact not found" />;
@@ -281,9 +303,38 @@ const ContactDetail = () => {
               {saving ? "Saving..." : "Save Changes"}
             </Button>
           </div>
+)}
+
+        {/* Activities Section */}
+        {!isEditing && (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <ApperIcon name="Activity" size={20} className="text-gray-600" />
+                <h2 className="text-lg font-semibold text-gray-900">Activity Log</h2>
+              </div>
+              <Button
+                onClick={handleAddActivity}
+                icon="Plus"
+                size="sm"
+              >
+                Log Activity
+              </Button>
+            </div>
+            <ActivityLog activities={activities} />
+          </div>
         )}
       </div>
-    </div>
+
+      {/* Activity Form Modal */}
+      <ActivityForm
+        isOpen={isActivityFormOpen}
+        onClose={() => setIsActivityFormOpen(false)}
+        entityType="contact"
+        entityId={id}
+        onSuccess={handleActivitySuccess}
+      />
+</div>
   );
 };
 
