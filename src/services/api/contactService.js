@@ -37,7 +37,7 @@ export const contactService = {
   },
 
   update: async (id, contactData) => {
-    await new Promise(resolve => setTimeout(resolve, 400));
+await new Promise(resolve => setTimeout(resolve, 400));
     const index = contacts.findIndex(c => c.Id === parseInt(id));
     if (index === -1) return null;
     contacts[index] = { 
@@ -47,7 +47,7 @@ export const contactService = {
       jobTitle: contactData.jobTitle || contacts[index].jobTitle || "",
       address: contactData.address || contacts[index].address || { street: "", city: "", state: "", zip: "" },
       notes: contactData.notes || contacts[index].notes || "",
-      activities: contactData.activities || contacts[index].activities || []
+      activities: contactData.activities !== undefined ? contactData.activities : (contacts[index].activities || [])
     };
     return { ...contacts[index] };
   },

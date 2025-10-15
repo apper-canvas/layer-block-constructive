@@ -3,7 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { contactService } from "@/services/api/contactService";
 import { activityService } from "@/services/api/activityService";
-import TaskForm from "@/components/organisms/TaskForm";
+import { emailTemplateService } from "@/services/api/emailTemplateService";
+import { getById, update } from "@/services/api/taskService";
 import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
@@ -11,6 +12,7 @@ import Contacts from "@/components/pages/Contacts";
 import Button from "@/components/atoms/Button";
 import Input from "@/components/atoms/Input";
 import ActivityLog from "@/components/molecules/ActivityLog";
+import TaskForm from "@/components/organisms/TaskForm";
 import ActivityForm from "@/components/organisms/ActivityForm";
 const ContactDetail = () => {
   const { id } = useParams();
@@ -22,7 +24,8 @@ const [contact, setContact] = useState(null);
   const [saving, setSaving] = useState(false);
   const [activities, setActivities] = useState([]);
 const [isActivityFormOpen, setIsActivityFormOpen] = useState(false);
-  const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
+const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
+  const [isEmailComposerOpen, setIsEmailComposerOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -72,13 +75,10 @@ const loadContact = async () => {
     }
   };
 
-  const handleActivitySuccess = () => {
+const handleActivitySuccess = () => {
     loadActivities();
   };
-<Button onClick={handleAddTask} variant="secondary">
-            <ApperIcon name="Plus" size={18} />
-            Add Task
-          </Button>
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -121,8 +121,56 @@ const loadContact = async () => {
     setIsEditing(false);
 };
 
-  const handleAddActivity = () => {
+const handleAddActivity = () => {
     setIsActivityFormOpen(true);
+  };
+
+  const handleSendEmail = async (emailData) => {
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const result = await apperClient.functions.invoke(import.meta.env.VITE_SEND_EMAIL, {
+        body: JSON.stringify({
+          to: contact.email,
+          subject: emailData.subject,
+          message: emailData.message
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!result.success) {
+        console.info(`apper_info: Got an error in this function: ${import.meta.env.VITE_SEND_EMAIL}. The response body is: ${JSON.stringify(result)}.`);
+        toast.error(result.error || "Failed to send email");
+        return;
+      }
+
+      const emailActivity = {
+        type: "email",
+        description: `Email sent: ${emailData.subject}`,
+        notes: emailData.message,
+        date: new Date().toISOString()
+      };
+
+      const updatedActivities = [...(contact.activities || []), emailActivity];
+      await contactService.update(contact.Id, { activities: updatedActivities });
+
+      setContact(prev => ({
+        ...prev,
+        activities: updatedActivities
+      }));
+
+      setIsEmailComposerOpen(false);
+      toast.success("Email sent successfully");
+    } catch (error) {
+      console.info(`apper_info: Got this error in this function: ${import.meta.env.VITE_SEND_EMAIL}. The error is: ${error.message}`);
+      toast.error("Failed to send email");
+    }
   };
 if (loading) return <Loading />;
   if (error) return <Error message={error} />;
@@ -348,6 +396,14 @@ if (loading) return <Loading />;
         entityType="contact"
         entityId={id}
         onSuccess={handleActivitySuccess}
+/>
+
+      <EmailComposer
+        isOpen={isEmailComposerOpen}
+        onClose={() => setIsEmailComposerOpen(false)}
+        onSend={handleSendEmail}
+        recipientEmail={contact?.email}
+        recipientName={contact?.name}
       />
     </div>
   );
