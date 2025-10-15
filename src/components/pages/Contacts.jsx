@@ -16,13 +16,14 @@ import CSVImportModal from "@/components/organisms/CSVImportModal";
 const Contacts = () => {
 const navigate = useNavigate();
 const [contacts, setContacts] = useState([]);
-  const [filteredContacts, setFilteredContacts] = useState([]);
+const [filteredContacts, setFilteredContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("All");
+  const [editingContact, setEditingContact] = useState(null);
   const typeOptions = [
     { value: "All", label: "All Types" },
     { value: "Lead", label: "Lead" },
@@ -126,12 +127,19 @@ const handleExport = async () => {
     }
   };
 
-  const handleFormClose = () => {
+const handleFormClose = () => {
     setIsFormOpen(false);
+    setEditingContact(null);
   };
 
   const handleFormSuccess = () => {
     loadContacts();
+    setEditingContact(null);
+  };
+
+  const handleEdit = (contact) => {
+    setEditingContact(contact);
+    setIsFormOpen(true);
   };
 
   const handleImportSuccess = () => {
@@ -197,11 +205,12 @@ return (
           icon="Search"
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredContacts.map((contact) => (
             <ContactCard
               key={contact.Id}
               contact={contact}
+              onEdit={handleEdit}
               onDelete={handleDelete}
             />
           ))}
@@ -209,10 +218,11 @@ return (
       )}
 
 {/* Contact Form Modal */}
-      <ContactForm
+<ContactForm
         isOpen={isFormOpen}
         onClose={handleFormClose}
         onSuccess={handleFormSuccess}
+        contact={editingContact}
       />
 
       {/* CSV Import Modal */}

@@ -72,7 +72,7 @@ if (!formData.phone.trim()) newErrors.phone = "Phone is required";
     setLoading(true);
     try {
 if (contact) {
-        await contactService.update(contact.id, formData);
+        await contactService.update(contact.Id, formData);
         toast.success("Contact updated successfully!");
       } else {
         await contactService.create(formData);
