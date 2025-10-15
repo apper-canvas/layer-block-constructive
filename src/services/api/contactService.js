@@ -8,16 +8,16 @@ export const contactService = {
     return [...contacts];
   },
 
-  getById: async (id) => {
+getById: async (id) => {
     await new Promise(resolve => setTimeout(resolve, 200));
-const contact = contacts.find(c => c.Id === parseInt(id));
+    const contact = contacts.find(c => c.Id === parseInt(id));
     return contact ? { ...contact, activities: contact.activities || [] } : null;
   },
 
-  create: async (contactData) => {
-await new Promise(resolve => setTimeout(resolve, 400));
+create: async (contactData) => {
+    await new Promise(resolve => setTimeout(resolve, 400));
     const highestId = Math.max(...contacts.map(c => c.Id), 0);
-const newContact = {
+    const newContact = {
       Id: highestId + 1,
       ...contactData,
       jobTitle: contactData.jobTitle || "",
@@ -32,11 +32,11 @@ const newContact = {
 
   update: async (id, contactData) => {
     await new Promise(resolve => setTimeout(resolve, 400));
-    const index = contacts.findIndex(c => c.Id === parseInt(id));
+const index = contacts.findIndex(c => c.Id === parseInt(id));
     if (index === -1) return null;
-contacts[index] = { 
+    contacts[index] = { 
       ...contacts[index], 
-...contactData,
+      ...contactData,
       jobTitle: contactData.jobTitle || contacts[index].jobTitle || "",
       address: contactData.address || contacts[index].address || { street: "", city: "", state: "", zip: "" },
       notes: contactData.notes || contacts[index].notes || "",
@@ -52,7 +52,5 @@ contacts[index] = {
     
     contacts.splice(index, 1);
     return true;
-  }
+}
 };
-
-export { contactService };

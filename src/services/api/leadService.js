@@ -8,18 +8,18 @@ export const leadService = {
     return [...leads];
   },
 
-  getById: async (id) => {
+getById: async (id) => {
     await new Promise(resolve => setTimeout(resolve, 200));
-const lead = leads.find(l => l.Id === parseInt(id));
+    const lead = leads.find(l => l.Id === parseInt(id));
     return lead ? { ...lead, activities: lead.activities || [] } : null;
   },
 
   create: async (leadData) => {
     await new Promise(resolve => setTimeout(resolve, 400));
     const highestId = Math.max(...leads.map(l => l.Id), 0);
-    const newLead = {
+const newLead = {
       Id: highestId + 1,
-...leadData,
+      ...leadData,
       activities: leadData.activities || [],
       createdAt: new Date().toISOString()
     };
@@ -30,9 +30,9 @@ const lead = leads.find(l => l.Id === parseInt(id));
   update: async (id, leadData) => {
     await new Promise(resolve => setTimeout(resolve, 400));
     const index = leads.findIndex(l => l.Id === parseInt(id));
-    if (index === -1) return null;
+if (index === -1) return null;
     
-leads[index] = { 
+    leads[index] = { 
       ...leads[index], 
       ...leadData,
       activities: leadData.activities || leads[index].activities || []
@@ -45,9 +45,7 @@ leads[index] = {
     const index = leads.findIndex(l => l.Id === parseInt(id));
     if (index === -1) return false;
     
-    leads.splice(index, 1);
+leads.splice(index, 1);
     return true;
-}
+  }
 };
-
-export { leadService };
