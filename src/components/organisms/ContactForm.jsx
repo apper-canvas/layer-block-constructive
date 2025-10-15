@@ -8,7 +8,6 @@ import Input from "@/components/atoms/Input";
 import Modal from "@/components/molecules/Modal";
 
 const ContactForm = ({ isOpen, onClose, contact = null, onSuccess }) => {
-const ContactForm = ({ isOpen, onClose, contact = null, onSuccess }) => {
   const [formData, setFormData] = useState({
     name: contact?.name || "",
     email: contact?.email || "",
@@ -58,8 +57,8 @@ const ContactForm = ({ isOpen, onClose, contact = null, onSuccess }) => {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Please enter a valid email";
     }
-    if (!formData.phone.trim()) newErrors.phone = "Phone is required";
-if (!formData.companyId) newErrors.companyId = "Company is required";
+if (!formData.phone.trim()) newErrors.phone = "Phone is required";
+    if (!formData.companyId) newErrors.companyId = "Company is required";
     if (!formData.jobTitle.trim()) newErrors.jobTitle = "Job title is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -72,14 +71,14 @@ if (!formData.companyId) newErrors.companyId = "Company is required";
 
     setLoading(true);
     try {
-      if (contact) {
-        await contactService.update(contact.Id, formData);
+if (contact) {
+        await contactService.update(contact.id, formData);
         toast.success("Contact updated successfully!");
       } else {
         await contactService.create(formData);
         toast.success("Contact created successfully!");
-      }
-onSuccess();
+}
+      onSuccess();
       onClose();
       setFormData({ 
         name: "", 
