@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { contactService } from "@/services/api/contactService";
+import { companyService } from "@/services/api/companyService";
 import { useNavigate } from "react-router-dom";
+import { getAll, getById } from "@/services/api/taskService";
 import Loading from "@/components/ui/Loading";
 import Empty from "@/components/ui/Empty";
 import Error from "@/components/ui/Error";
@@ -53,18 +55,42 @@ const [contacts, setContacts] = useState([]);
     return () => window.removeEventListener("addButtonClick", handleAddButtonClick);
 }, []);
 
-  useEffect(() => {
-let filtered = contacts.filter(contact => 
-      contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contact.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contact.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+useEffect(() => {
+    const loadFilteredContacts = async () => {
+      try {
+        let filtered = contacts.filter(contact => 
+          contact?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (contact?.companyName && contact.companyName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          contact?.email?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
 
-    if (typeFilter !== "All") {
-      filtered = filtered.filter(contact => contact.type === typeFilter);
-    }
+        if (typeFilter !== "All") {
+          filtered = filtered.filter(contact => contact?.type === typeFilter);
+        }
 
-    setFilteredContacts(filtered);
+        const contactsWithCompanyNames = await Promise.all(
+          filtered.map(async contact => {
+            if (contact?.companyId) {
+              try {
+                const company = await companyService.getById(contact.companyId);
+                return { ...contact, companyName: company?.name || 'Unknown Company' };
+              } catch (error) {
+                console.error('Failed to fetch company:', error);
+                return { ...contact, companyName: 'Unknown Company' };
+              }
+            }
+            return { ...contact, companyName: 'No Company' };
+          })
+        );
+
+        setFilteredContacts(contactsWithCompanyNames);
+      } catch (error) {
+        console.error('Failed to filter contacts:', error);
+        setFilteredContacts(contacts);
+      }
+    };
+
+    loadFilteredContacts();
   }, [searchTerm, typeFilter, contacts]);
 
 
@@ -97,7 +123,7 @@ return (
     <div className="p-6">
       {/* Search and Filters */}
       <div className="mb-6 flex flex-col sm:flex-row gap-4">
-        <div className="flex-1 max-w-md">
+<div className="flex-1 max-w-md">
           <Input
             placeholder="Search contacts..."
             value={searchTerm}
@@ -105,7 +131,7 @@ return (
           />
         </div>
         <div className="w-full sm:w-48">
-          <Select
+<Select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
           >

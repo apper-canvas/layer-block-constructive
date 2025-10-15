@@ -33,7 +33,7 @@ const ContactCard = ({
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <h3 className="text-xl font-semibold text-gray-900 mb-1">{contact.name}</h3>
-          <p className="text-sm text-gray-500">{contact.company}</p>
+<p className="text-sm text-gray-500">{contact.companyName || 'No Company'}</p>
         </div>
 <div className="flex gap-2">
           <Button

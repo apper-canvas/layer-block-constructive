@@ -5,9 +5,10 @@ import ApperIcon from "@/components/ApperIcon";
 const Sidebar = ({ className = "" }) => {
   const navigation = [
     { name: "Dashboard", href: "", icon: "Home" },
+{ name: "Companies", href: "companies", icon: "Building2" },
     { name: "Contacts", href: "contacts", icon: "Users" },
-{ name: "Leads", href: "leads", icon: "Target" },
-{ name: "Deals", href: "deals", icon: "Briefcase" },
+    { name: "Leads", href: "leads", icon: "Target" },
+    { name: "Deals", href: "deals", icon: "Briefcase" },
     { name: "Tasks", href: "tasks", icon: "CheckSquare" }
   ];
 

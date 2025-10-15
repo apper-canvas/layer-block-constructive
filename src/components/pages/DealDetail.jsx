@@ -3,23 +3,26 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { dealService } from "@/services/api/dealService";
 import { contactService } from "@/services/api/contactService";
+import { companyService } from "@/services/api/companyService";
 import { activityService } from "@/services/api/activityService";
-import ActivityLog from "@/components/molecules/ActivityLog";
-import ActivityForm from "@/components/organisms/ActivityForm";
+import { getAll, getById, update } from "@/services/api/taskService";
 import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
 import Select from "@/components/atoms/Select";
+import Input from "@/components/atoms/Input";
+import ActivityLog from "@/components/molecules/ActivityLog";
 import StatusBadge from "@/components/molecules/StatusBadge";
+import ActivityForm from "@/components/organisms/ActivityForm";
 
 const DealDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [deal, setDeal] = useState(null);
-  const [contact, setContact] = useState(null);
+const [contact, setContact] = useState(null);
   const [contacts, setContacts] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,8 +39,21 @@ const DealDetail = () => {
   useEffect(() => {
     if (deal?.contactId) {
       loadContact(deal.contactId);
-    }
+}
   }, [deal?.contactId]);
+
+  useEffect(() => {
+    loadCompanies();
+  }, []);
+
+  async function loadCompanies() {
+    try {
+      const companiesData = await companyService.getAll();
+      setCompanies(companiesData);
+    } catch (err) {
+      console.error('Failed to load companies:', err);
+    }
+  }
 
   async function loadDeal() {
     try {
@@ -67,7 +83,7 @@ const DealDetail = () => {
     }
   }
 
-  async function loadContacts() {
+async function loadContacts() {
     try {
       const data = await contactService.getAll();
       setContacts(data);
@@ -103,7 +119,7 @@ const DealDetail = () => {
     try {
       const updatedData = {
         ...editedDeal,
-        value: parseFloat(editedDeal.value),
+value: parseFloat(editedDeal.value),
         contactId: parseInt(editedDeal.contactId)
       };
       await dealService.update(id, updatedData);
@@ -252,13 +268,16 @@ const DealDetail = () => {
                     name="contactId"
                     value={editedDeal.contactId}
                     onChange={handleChange}
-                    required
+required
                   >
-                    {contacts.map(c => (
-                      <option key={c.Id} value={c.Id}>
-                        {c.name} - {c.company}
-                      </option>
-                    ))}
+                    {contacts.map(c => {
+                      const company = companies.find(comp => comp.Id === c.companyId);
+                      return (
+                        <option key={c.Id} value={c.Id}>
+                          {c.name} - {company?.name || 'No Company'}
+                        </option>
+                      );
+                    })}
                   </Select>
 
                   <div className="space-y-2">
@@ -346,7 +365,7 @@ const DealDetail = () => {
             ) : (
               <p className="text-gray-500 text-sm">No contact associated</p>
             )}
-          </div>
+</div>
         </div>
       </div>
 

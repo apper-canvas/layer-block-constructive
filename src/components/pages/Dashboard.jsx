@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { contactService } from "@/services/api/contactService";
 import { leadService } from "@/services/api/leadService";
 import { dealService } from "@/services/api/dealService";
+import { companyService } from "@/services/api/companyService";
 import { activityService } from "@/services/api/activityService";
 import Chart from "react-apexcharts";
 import { addDays, format, isAfter, isBefore, isPast } from "date-fns";
@@ -14,12 +15,12 @@ import Error from "@/components/ui/Error";
 import Leads from "@/components/pages/Leads";
 import Deals from "@/components/pages/Deals";
 import MetricCard from "@/components/molecules/MetricCard";
-
 const Dashboard = () => {
-  const [contacts, setContacts] = useState([]);
+const [contacts, setContacts] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [leads, setLeads] = useState([]);
   const [deals, setDeals] = useState([]);
-const [activities, setActivities] = useState([]);
+  const [activities, setActivities] = useState([]);
   const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -30,8 +31,9 @@ const loadData = async () => {
       setLoading(true);
       setError("");
       
-const [contactsData, leadsData, dealsData, tasksData] = await Promise.all([
+      const [contactsData, companiesData, leadsData, dealsData, tasksData] = await Promise.all([
         contactService.getAll(),
+        companyService.getAll(),
         leadService.getAll(),
         dealService.getAll(),
         taskService.getAll()
@@ -59,8 +61,9 @@ const [contactsData, leadsData, dealsData, tasksData] = await Promise.all([
       const allActivities = [...contactActivities, ...leadActivities];
       
       setContacts(contactsData);
+      setCompanies(companiesData);
       setLeads(leadsData);
-setDeals(dealsData);
+      setDeals(dealsData);
       setActivities(allActivities);
       setTasks(tasksData);
     } catch (err) {
@@ -193,6 +196,11 @@ if (loading) return <Loading />;
 {/* Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
         <MetricCard
+          label="Total Companies"
+          value={companies.length}
+          icon="Building2"
+        />
+        <MetricCard
           label="Total Contacts"
           value={contacts.length}
           icon="Users"
@@ -211,15 +219,6 @@ if (loading) return <Loading />;
           label="Active Pipeline"
           value={`$${(activeDealValue / 1000).toFixed(0)}K`}
           icon="TrendingUp"
-        />
-        {/* Overdue Tasks Metric */}
-        <MetricCard
-          label="Overdue Tasks"
-          value={tasks.filter(t => !t.completed && isPast(new Date(t.dueDate))).length}
-          icon="AlertTriangle"
-          trend="urgent"
-          trendValue="Requires attention"
-          className="bg-gradient-to-br from-red-50 to-orange-50 border-red-200"
         />
       </div>
       {/* Charts and Visual Analytics */}

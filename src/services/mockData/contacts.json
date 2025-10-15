@@ -4,7 +4,7 @@
     "name": "Sarah Johnson",
     "email": "sarah.johnson@techcorp.com",
     "phone": "(555) 123-4567",
-    "company": "TechCorp Solutions",
+"companyId": 1,
     "jobTitle": "Senior Product Manager",
     "type": "Customer",
     "address": {
@@ -41,7 +41,7 @@
     "name": "Michael Chen",
     "email": "m.chen@innovate.co",
     "phone": "(555) 987-6543",
-    "company": "Innovate Co",
+"companyId": 2,
     "jobTitle": "Chief Technology Officer",
     "type": "Lead",
     "address": {
@@ -74,6 +74,7 @@
     "phone": "(555) 456-7890",
     "company": "StartupLab",
     "jobTitle": "Founder & CEO",
+"companyId": 3,
     "type": "Lead",
     "address": {
       "street": "789 Startup Lane",
@@ -110,6 +111,7 @@
     "email": "d.thompson@megacorp.com",
     "phone": "(555) 321-9876",
     "company": "MegaCorp Industries",
+"companyId": 4,
     "jobTitle": "VP of Operations",
     "type": "Customer",
     "address": {
@@ -142,6 +144,7 @@
     "phone": "(555) 654-3210",
     "company": "CloudTech Networks",
     "jobTitle": "Director of Engineering",
+"companyId": 5,
     "type": "Partner",
     "address": {
       "street": "654 Cloud Street",

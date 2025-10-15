@@ -9,14 +9,16 @@ const Header = ({ onMenuClick, onAddClick, className = "" }) => {
 const getPageTitle = () => {
     const path = location.pathname;
     if (path === "/") return "Dashboard";
+if (path === "/companies") return "Companies";
     if (path === "/contacts") return "Contacts";
     if (path === "/leads") return "Leads";
+    if (path.startsWith("/companies/")) return "Company Details";
     if (path.startsWith("/contacts/")) return "Contact Details";
     if (path.startsWith("/leads/")) return "Lead Details";
     return "CRM Pro";
   };
 
-  const showAddButton = location.pathname === "/contacts" || location.pathname === "/leads";
+const showAddButton = location.pathname === "/companies" || location.pathname === "/contacts" || location.pathname === "/leads";
 
   return (
     <header className={cn(
@@ -42,7 +44,7 @@ const getPageTitle = () => {
             icon="Plus"
             size="sm"
           >
-            Add {location.pathname === "/contacts" ? "Contact" : "Lead"}
+Add {location.pathname === "/companies" ? "Company" : location.pathname === "/contacts" ? "Contact" : "Lead"}
           </Button>
         )}
       </div>

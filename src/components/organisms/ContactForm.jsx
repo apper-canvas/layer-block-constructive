@@ -1,23 +1,47 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { contactService } from "@/services/api/contactService";
+import { companyService } from "@/services/api/companyService";
 import Button from "@/components/atoms/Button";
+import Select from "@/components/atoms/Select";
 import Input from "@/components/atoms/Input";
 import Modal from "@/components/molecules/Modal";
-import { contactService } from "@/services/api/contactService";
 
 const ContactForm = ({ isOpen, onClose, contact = null, onSuccess }) => {
-const [formData, setFormData] = useState({
+const ContactForm = ({ isOpen, onClose, contact = null, onSuccess }) => {
+  const [formData, setFormData] = useState({
     name: contact?.name || "",
     email: contact?.email || "",
     phone: contact?.phone || "",
-    company: contact?.company || "",
+    companyId: contact?.companyId || "",
     jobTitle: contact?.jobTitle || "",
     address: contact?.address || { street: "", city: "", state: "", zip: "" },
     notes: contact?.notes || ""
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [companies, setCompanies] = useState([]);
+  const [loadingCompanies, setLoadingCompanies] = useState(false);
 
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      setLoadingCompanies(true);
+      try {
+        const response = await companyService.getAll();
+        setCompanies(response?.data || []);
+      } catch (error) {
+        console.error("Failed to fetch companies:", error);
+        toast.error("Failed to load companies");
+        setCompanies([]);
+      } finally {
+        setLoadingCompanies(false);
+      }
+    };
+
+    if (isOpen) {
+      fetchCompanies();
+    }
+  }, [isOpen]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -35,7 +59,7 @@ const [formData, setFormData] = useState({
       newErrors.email = "Please enter a valid email";
     }
     if (!formData.phone.trim()) newErrors.phone = "Phone is required";
-if (!formData.company.trim()) newErrors.company = "Company is required";
+if (!formData.companyId) newErrors.companyId = "Company is required";
     if (!formData.jobTitle.trim()) newErrors.jobTitle = "Job title is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -55,23 +79,38 @@ if (!formData.company.trim()) newErrors.company = "Company is required";
         await contactService.create(formData);
         toast.success("Contact created successfully!");
       }
-      
-      onSuccess();
+onSuccess();
       onClose();
-      setFormData({ name: "", email: "", phone: "", company: "" });
+      setFormData({ 
+        name: "", 
+        email: "", 
+        phone: "", 
+        companyId: "", 
+        jobTitle: "", 
+        address: { street: "", city: "", state: "", zip: "" }, 
+        notes: "" 
+      });
     } catch (error) {
+      console.error("Failed to save contact:", error);
       toast.error("Failed to save contact. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleClose = () => {
+const handleClose = () => {
     onClose();
-    setFormData({ name: "", email: "", phone: "", company: "" });
+    setFormData({ 
+      name: "", 
+      email: "", 
+      phone: "", 
+      companyId: "", 
+      jobTitle: "", 
+      address: { street: "", city: "", state: "", zip: "" }, 
+      notes: "" 
+    });
     setErrors({});
   };
-
   return (
     <Modal
       isOpen={isOpen}
@@ -111,16 +150,22 @@ if (!formData.company.trim()) newErrors.company = "Company is required";
           placeholder="Enter phone number"
         />
 
-        <Input
+<Select
           label="Company"
-          name="company"
-          value={formData.company}
+          name="companyId"
+          value={formData.companyId}
           onChange={handleChange}
-          error={errors.company}
+          error={errors.companyId}
           required
-          placeholder="Enter company name"
-        />
-
+          disabled={loadingCompanies}
+        >
+          <option value="">{loadingCompanies ? "Loading companies..." : "Select Company"}</option>
+          {companies.map(c => (
+            <option key={c.Id} value={c.Id}>
+              {c.name}
+            </option>
+          ))}
+        </Select>
         <Input
           label="Job Title"
           name="jobTitle"
