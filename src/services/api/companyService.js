@@ -32,7 +32,7 @@ if (!response?.data) {
       }
 
       // Transform database field names to UI-friendly property names
-      return response.data.map(company => ({
+return response.data.map(company => ({
         Id: company.Id,
         name: company.name_c,
         industry: company.industry_c,
@@ -48,8 +48,6 @@ if (!response?.data) {
         annualRevenue: company.annual_revenue_c,
         notes: company.notes_c
       }));
-
-      return response.data || [];
     } catch (error) {
       console.error("Failed to load companies:", error?.message || error);
       toast.error("Failed to load companies");
@@ -88,7 +86,7 @@ fields: [
       }
 
       // Transform database field names to UI-friendly property names
-      const company = response.data;
+const company = response.data;
       return {
         Id: company.Id,
         name: company.name_c,
@@ -105,8 +103,6 @@ fields: [
         annualRevenue: company.annual_revenue_c,
         notes: company.notes_c
       };
-
-      return response.data || null;
     } catch (error) {
       console.error(`Failed to load company ${id}:`, error?.message || error);
       return null;
