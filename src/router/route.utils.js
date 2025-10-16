@@ -115,7 +115,7 @@ function executeCustomFunction(functionName, user) {
 }
 
 export function verifyRouteAccess(config, user) {
-  if (!config || !config.allow || !user) {
+  if (!config || !config.allow) {
     return {
       allowed: true,
       redirectTo: null,
