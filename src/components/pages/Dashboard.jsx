@@ -279,10 +279,10 @@ if (loading) return <Loading />;
             <h3 className="text-lg font-semibold text-gray-900">Recent Activities</h3>
             <ApperIcon name="Activity" size={20} className="text-gray-400" />
           </div>
-          <div className="space-y-3">
+<div className="space-y-3">
             {recentActivities.length > 0 ? (
               recentActivities.map((activity) => (
-                <div key={activity.Id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div key={`${activity.date}-${activity.entityType}-${activity.entityId}`} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <div className="flex-shrink-0 mt-1">
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                       <ApperIcon 
@@ -315,10 +315,10 @@ if (loading) return <Loading />;
               <ApperIcon name="ArrowRight" size={14} />
             </button>
           </div>
-          <div className="space-y-3">
+<div className="space-y-3">
             {overdueTasks.length > 0 ? (
               overdueTasks.map((task) => (
-                <div key={task.Id} className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
+                <div key={`${task.Id}-${task.dueDate}-${task.priority}`} className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
                   <button
                     onClick={() => handleMarkTaskComplete(task.Id)}
                     className="flex-shrink-0 w-5 h-5 rounded border-2 border-red-400 flex items-center justify-center transition-all mt-0.5 hover:bg-red-400 hover:border-red-500"
