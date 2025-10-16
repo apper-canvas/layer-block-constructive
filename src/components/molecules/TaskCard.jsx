@@ -65,14 +65,14 @@ function TaskCard({ task, onComplete, onEdit, onDelete, className }) {
       {/* Metadata */}
       <div className="flex flex-wrap items-center gap-2 mb-3">
         {/* Priority Badge */}
-        <span
+<span
           className={cn(
             "inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium border",
-            priorityColors[task.priority]
+            priorityColors[task.priority ?? 'medium']
           )}
         >
-          <ApperIcon name={priorityIcons[task.priority]} size={12} />
-          {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+          <ApperIcon name={priorityIcons[task.priority ?? 'medium']} size={12} />
+          {(task.priority ?? 'medium').charAt(0).toUpperCase() + (task.priority ?? 'medium').slice(1)}
         </span>
 
         {/* Status Badge */}
