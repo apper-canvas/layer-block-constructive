@@ -9,11 +9,26 @@ const TABLE_NAME = "lead_c";
 const transformLeadFromDB = (dbLead) => {
   if (!dbLead) return null;
   
-  let activities = [];
+let activities = [];
   try {
-    activities = dbLead.activities_c ? JSON.parse(dbLead.activities_c) : [];
+    // Validate activities_c is a non-empty string before parsing
+    if (dbLead.activities_c && 
+        typeof dbLead.activities_c === 'string' && 
+        dbLead.activities_c.trim() !== '') {
+      
+      // Additional check: ensure it looks like JSON (starts with [ or {)
+      const trimmed = dbLead.activities_c.trim();
+      if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+        activities = JSON.parse(trimmed);
+      } else {
+        console.error("activities_c does not appear to be valid JSON format:", trimmed.substring(0, 50));
+        activities = [];
+      }
+    } else {
+      activities = [];
+    }
   } catch (e) {
-    console.error("Failed to parse activities:", e);
+    console.error("Failed to parse activities_c. Error:", e.message, "Value:", dbLead.activities_c?.substring(0, 50));
     activities = [];
   }
 
