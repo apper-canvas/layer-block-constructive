@@ -72,7 +72,7 @@ function TaskCard({ task, onComplete, onEdit, onDelete, className }) {
           )}
         >
           <ApperIcon name={priorityIcons[task.priority ?? 'medium']} size={12} />
-          {(task.priority ?? 'medium').charAt(0).toUpperCase() + (task.priority ?? 'medium').slice(1)}
+{(task.priority ?? 'medium').charAt(0).toUpperCase() + (task.priority ?? 'medium').slice(1)}
         </span>
 
         {/* Status Badge */}
