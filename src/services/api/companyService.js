@@ -9,7 +9,7 @@ const companyService = {
         throw new Error("ApperClient not initialized");
       }
 
-      const response = await apperClient.fetchRecords("company_c", {
+const response = await apperClient.fetchRecords("company_c", {
         fields: [
           { field: { Name: "Id" } },
           { field: { Name: "name_c" } },
@@ -27,12 +27,27 @@ const companyService = {
           { field: { Name: "notes_c" } }
         ]
       });
-
-      if (!response.success) {
-        console.error(response.message);
-        toast.error(response.message);
+if (!response?.data) {
         return [];
       }
+
+      // Transform database field names to UI-friendly property names
+      return response.data.map(company => ({
+        Id: company.Id,
+        name: company.name_c,
+        industry: company.industry_c,
+        website: company.website_c,
+        phone: company.phone_c,
+        email: company.email_c,
+        address: company.address_c,
+        city: company.city_c,
+        state: company.state_c,
+        zipCode: company.zip_code_c,
+        country: company.country_c,
+        employeeCount: company.employee_count_c,
+        annualRevenue: company.annual_revenue_c,
+        notes: company.notes_c
+      }));
 
       return response.data || [];
     } catch (error) {
@@ -50,7 +65,7 @@ const companyService = {
       }
 
       const response = await apperClient.getRecordById("company_c", parseInt(id), {
-        fields: [
+fields: [
           { field: { Name: "Id" } },
           { field: { Name: "name_c" } },
           { field: { Name: "industry_c" } },
@@ -66,12 +81,30 @@ const companyService = {
           { field: { Name: "annual_revenue_c" } },
           { field: { Name: "notes_c" } }
         ]
-      });
+});
 
-      if (!response.success) {
-        console.error(response.message);
+      if (!response?.data) {
         return null;
       }
+
+      // Transform database field names to UI-friendly property names
+      const company = response.data;
+      return {
+        Id: company.Id,
+        name: company.name_c,
+        industry: company.industry_c,
+        website: company.website_c,
+        phone: company.phone_c,
+        email: company.email_c,
+        address: company.address_c,
+        city: company.city_c,
+        state: company.state_c,
+        zipCode: company.zip_code_c,
+        country: company.country_c,
+        employeeCount: company.employee_count_c,
+        annualRevenue: company.annual_revenue_c,
+        notes: company.notes_c
+      };
 
       return response.data || null;
     } catch (error) {
