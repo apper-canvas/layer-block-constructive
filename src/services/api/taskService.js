@@ -1,157 +1,245 @@
-// Task service handles task CRUD operations with mock data storage
+import { getApperClient } from "@/services/apperClient";
+// Task service handles task CRUD operations with ApperClient
 // Tasks can be associated with contacts or leads for follow-up reminders
 
-import tasksData from '../mockData/tasks.json';
+// Utility function for realistic delays
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-let tasks = [...tasksData];
-let nextId = Math.max(...tasks.map(t => t.Id), 0) + 1;
+// Table name from database schema
+const TABLE_NAME = 'task_c';
 
 // Get all tasks
-export function getAll() {
-  return Promise.resolve([...tasks]);
+export async function getAllTasks() {
+  try {
+    await delay(300);
+    
+    const apperClient = getApperClient();
+    if (!apperClient) {
+      console.error('ApperClient not initialized');
+      return [];
+    }
+
+    const params = {
+      fields: [
+        { field: { Name: "Id" } },
+        { field: { Name: "title_c" } },
+        { field: { Name: "description_c" } },
+        { field: { Name: "status_c" } },
+        { field: { Name: "priority_c" } },
+        { field: { Name: "due_date_c" } },
+        { field: { Name: "assigned_to_c" } },
+        { field: { Name: "completed_c" } }
+      ],
+      pagingInfo: {
+        limit: 100,
+        offset: 0
+      }
+    };
+
+    const response = await apperClient.fetchRecords(TABLE_NAME, params);
+
+    if (!response.success) {
+      console.error('Error fetching tasks:', response.message);
+      return [];
+    }
+
+    return response.data || [];
+  } catch (error) {
+    console.error('Error in getAllTasks:', error?.response?.data?.message || error.message);
+    return [];
+  }
 }
 
 // Get task by ID
-export function getById(id) {
-  const taskId = parseInt(id, 10);
-  if (isNaN(taskId)) {
-    return Promise.reject(new Error('Invalid task ID'));
+export async function getTaskById(id) {
+  try {
+    await delay(200);
+    
+    const apperClient = getApperClient();
+    if (!apperClient) {
+      console.error('ApperClient not initialized');
+      return null;
+    }
+
+    const params = {
+      fields: [
+        { field: { Name: "Id" } },
+        { field: { Name: "title_c" } },
+        { field: { Name: "description_c" } },
+        { field: { Name: "status_c" } },
+        { field: { Name: "priority_c" } },
+        { field: { Name: "due_date_c" } },
+        { field: { Name: "assigned_to_c" } },
+        { field: { Name: "completed_c" } }
+      ]
+    };
+
+    const response = await apperClient.getRecordById(TABLE_NAME, id, params);
+
+    if (!response.success) {
+      console.error(`Error fetching task ${id}:`, response.message);
+      return null;
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error(`Error in getTaskById(${id}):`, error?.response?.data?.message || error.message);
+    return null;
   }
-  
-  const task = tasks.find(t => t.Id === taskId);
-  if (!task) {
-    return Promise.reject(new Error('Task not found'));
-  }
-  
-  return Promise.resolve({ ...task });
-}
-
-// Get tasks by entity (contact or lead)
-export function getByEntity(entityType, entityId) {
-  const id = parseInt(entityId, 10);
-  if (isNaN(id)) {
-    return Promise.reject(new Error('Invalid entity ID'));
-  }
-  
-  const entityTasks = tasks.filter(
-    t => t.entityType === entityType && t.entityId === id
-  );
-  
-  return Promise.resolve([...entityTasks]);
-}
-
-// Get overdue tasks
-export function getOverdue() {
-  const now = new Date();
-  const overdueTasks = tasks.filter(
-    t => !t.completed && new Date(t.dueDate) < now
-  );
-  
-  return Promise.resolve([...overdueTasks]);
-}
-
-// Get pending tasks
-export function getPending() {
-  const pendingTasks = tasks.filter(t => !t.completed);
-  return Promise.resolve([...pendingTasks]);
-}
-
-// Get completed tasks
-export function getCompleted() {
-  const completedTasks = tasks.filter(t => t.completed);
-  return Promise.resolve([...completedTasks]);
 }
 
 // Create new task
-export function create(taskData) {
-  // Ignore any provided Id
-  const newTask = {
-    Id: nextId++,
-    title: taskData.title,
-    description: taskData.description || '',
-    dueDate: taskData.dueDate,
-    priority: taskData.priority || 'medium',
-    completed: false,
-    entityType: taskData.entityType || null,
-    entityId: taskData.entityId ? parseInt(taskData.entityId, 10) : null,
-    entityName: taskData.entityName || null,
-    createdAt: new Date().toISOString()
-  };
-  
-  tasks.push(newTask);
-  return Promise.resolve({ ...newTask });
+export async function createTask(taskData) {
+  try {
+    await delay(400);
+    
+    const apperClient = getApperClient();
+    if (!apperClient) {
+      console.error('ApperClient not initialized');
+      return null;
+    }
+
+    // Only include Updateable fields
+    const params = {
+      records: [{
+        title_c: taskData.title_c || taskData.title,
+        description_c: taskData.description_c || taskData.description || '',
+        status_c: taskData.status_c || taskData.status || 'pending',
+        priority_c: taskData.priority_c || taskData.priority || 'medium',
+        due_date_c: taskData.due_date_c || taskData.dueDate || taskData.due_date,
+        assigned_to_c: taskData.assigned_to_c || taskData.assignedTo || taskData.assigned_to,
+        completed_c: taskData.completed_c !== undefined ? taskData.completed_c : (taskData.completed || false)
+      }]
+    };
+
+    const response = await apperClient.createRecord(TABLE_NAME, params);
+
+    if (!response.success) {
+      console.error('Error creating task:', response.message);
+      return null;
+    }
+
+    if (response.results && response.results.length > 0) {
+      const result = response.results[0];
+      if (result.success) {
+        return result.data;
+      } else {
+        console.error('Task creation failed:', result.message);
+        return null;
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error in createTask:', error?.response?.data?.message || error.message);
+    return null;
+  }
 }
 
-// Update existing task
-export function update(id, taskData) {
-  const taskId = parseInt(id, 10);
-  if (isNaN(taskId)) {
-    return Promise.reject(new Error('Invalid task ID'));
-  }
-  
-  const index = tasks.findIndex(t => t.Id === taskId);
-  if (index === -1) {
-    return Promise.reject(new Error('Task not found'));
-  }
-  
-  tasks[index] = {
-    ...tasks[index],
-    title: taskData.title ?? tasks[index].title,
-    description: taskData.description ?? tasks[index].description,
-    dueDate: taskData.dueDate ?? tasks[index].dueDate,
-    priority: taskData.priority ?? tasks[index].priority,
-    completed: taskData.completed ?? tasks[index].completed,
-    entityType: taskData.entityType ?? tasks[index].entityType,
-    entityId: taskData.entityId ? parseInt(taskData.entityId, 10) : tasks[index].entityId,
-    entityName: taskData.entityName ?? tasks[index].entityName
-  };
-  
-  return Promise.resolve({ ...tasks[index] });
-}
+// Update task
+export async function updateTask(id, taskData) {
+  try {
+    await delay(400);
+    
+    const apperClient = getApperClient();
+    if (!apperClient) {
+      console.error('ApperClient not initialized');
+      return null;
+    }
 
-// Mark task as complete
-export function markComplete(id) {
-  const taskId = parseInt(id, 10);
-  if (isNaN(taskId)) {
-    return Promise.reject(new Error('Invalid task ID'));
+    // Only include Updateable fields that are provided
+    const updateFields = {
+      Id: parseInt(id)
+    };
+
+    if (taskData.title_c !== undefined || taskData.title !== undefined) {
+      updateFields.title_c = taskData.title_c || taskData.title;
+    }
+    if (taskData.description_c !== undefined || taskData.description !== undefined) {
+      updateFields.description_c = taskData.description_c || taskData.description;
+    }
+    if (taskData.status_c !== undefined || taskData.status !== undefined) {
+      updateFields.status_c = taskData.status_c || taskData.status;
+    }
+    if (taskData.priority_c !== undefined || taskData.priority !== undefined) {
+      updateFields.priority_c = taskData.priority_c || taskData.priority;
+    }
+    if (taskData.due_date_c !== undefined || taskData.dueDate !== undefined || taskData.due_date !== undefined) {
+      updateFields.due_date_c = taskData.due_date_c || taskData.dueDate || taskData.due_date;
+    }
+    if (taskData.assigned_to_c !== undefined || taskData.assignedTo !== undefined || taskData.assigned_to !== undefined) {
+      updateFields.assigned_to_c = taskData.assigned_to_c || taskData.assignedTo || taskData.assigned_to;
+    }
+    if (taskData.completed_c !== undefined || taskData.completed !== undefined) {
+      updateFields.completed_c = taskData.completed_c !== undefined ? taskData.completed_c : taskData.completed;
+    }
+
+    const params = {
+      records: [updateFields]
+    };
+
+    const response = await apperClient.updateRecord(TABLE_NAME, params);
+
+    if (!response.success) {
+      console.error(`Error updating task ${id}:`, response.message);
+      return null;
+    }
+
+    if (response.results && response.results.length > 0) {
+      const result = response.results[0];
+      if (result.success) {
+        return result.data;
+      } else {
+        console.error('Task update failed:', result.message);
+        return null;
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error(`Error in updateTask(${id}):`, error?.response?.data?.message || error.message);
+    return null;
   }
-  
-  const index = tasks.findIndex(t => t.Id === taskId);
-  if (index === -1) {
-    return Promise.reject(new Error('Task not found'));
-  }
-  
-  tasks[index].completed = true;
-  tasks[index].completedAt = new Date().toISOString();
-  
-  return Promise.resolve({ ...tasks[index] });
 }
 
 // Delete task
-export function deleteTask(id) {
-  const taskId = parseInt(id, 10);
-  if (isNaN(taskId)) {
-    return Promise.reject(new Error('Invalid task ID'));
+export async function deleteTask(id) {
+  try {
+    await delay(300);
+    
+    const apperClient = getApperClient();
+    if (!apperClient) {
+      console.error('ApperClient not initialized');
+      return false;
+    }
+
+    const params = {
+      RecordIds: [parseInt(id)]
+    };
+
+    const response = await apperClient.deleteRecord(TABLE_NAME, params);
+
+    if (!response.success) {
+      console.error(`Error deleting task ${id}:`, response.message);
+      return false;
+    }
+
+    if (response.results && response.results.length > 0) {
+      const result = response.results[0];
+      return result.success;
+    }
+
+    return false;
+  } catch (error) {
+    console.error(`Error in deleteTask(${id}):`, error?.response?.data?.message || error.message);
+    return false;
   }
-  
-  const index = tasks.findIndex(t => t.Id === taskId);
-  if (index === -1) {
-    return Promise.reject(new Error('Task not found'));
-  }
-  
-  tasks.splice(index, 1);
-  return Promise.resolve({ success: true });
 }
 
 export const taskService = {
-  getAll,
-  getById,
-  getByEntity,
-  getOverdue,
-  getPending,
-  getCompleted,
-  create,
-  update,
-  markComplete,
-  delete: deleteTask
+  getAllTasks,
+  getTaskById,
+  createTask,
+  updateTask,
+  deleteTask
 };
