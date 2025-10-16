@@ -1,82 +1,325 @@
-import companiesData from '../mockData/companies.json';
-import { contactService } from './contactService';
-import { dealService } from './dealService';
-
-let companies = [...companiesData];
+import { getApperClient } from "@/services/apperClient";
+import { toast } from "react-toastify";
 
 const companyService = {
-  getAll() {
-    return Promise.resolve(companies.map(c => ({ ...c })));
+  async getAll() {
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error("ApperClient not initialized");
+      }
+
+      const response = await apperClient.fetchRecords("company_c", {
+        fields: [
+          { field: { Name: "Id" } },
+          { field: { Name: "name_c" } },
+          { field: { Name: "industry_c" } },
+          { field: { Name: "website_c" } },
+          { field: { Name: "phone_c" } },
+          { field: { Name: "email_c" } },
+          { field: { Name: "address_c" } },
+          { field: { Name: "city_c" } },
+          { field: { Name: "state_c" } },
+          { field: { Name: "zip_code_c" } },
+          { field: { Name: "country_c" } },
+          { field: { Name: "employee_count_c" } },
+          { field: { Name: "annual_revenue_c" } },
+          { field: { Name: "notes_c" } }
+        ]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Failed to load companies:", error?.message || error);
+      toast.error("Failed to load companies");
+      return [];
+    }
   },
 
-  getById(id) {
-    const company = companies.find(c => c.Id === parseInt(id));
-    return Promise.resolve(company ? { ...company } : null);
+  async getById(id) {
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error("ApperClient not initialized");
+      }
+
+      const response = await apperClient.getRecordById("company_c", parseInt(id), {
+        fields: [
+          { field: { Name: "Id" } },
+          { field: { Name: "name_c" } },
+          { field: { Name: "industry_c" } },
+          { field: { Name: "website_c" } },
+          { field: { Name: "phone_c" } },
+          { field: { Name: "email_c" } },
+          { field: { Name: "address_c" } },
+          { field: { Name: "city_c" } },
+          { field: { Name: "state_c" } },
+          { field: { Name: "zip_code_c" } },
+          { field: { Name: "country_c" } },
+          { field: { Name: "employee_count_c" } },
+          { field: { Name: "annual_revenue_c" } },
+          { field: { Name: "notes_c" } }
+        ]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        return null;
+      }
+
+      return response.data || null;
+    } catch (error) {
+      console.error(`Failed to load company ${id}:`, error?.message || error);
+      return null;
+    }
   },
 
   async create(companyData) {
-    const newCompany = {
-      Id: companies.length > 0 ? Math.max(...companies.map(c => c.Id)) + 1 : 1,
-      name: companyData.name,
-      industry: companyData.industry,
-      website: companyData.website || '',
-      phone: companyData.phone || '',
-      email: companyData.email || '',
-      address: companyData.address || '',
-      city: companyData.city || '',
-      state: companyData.state || '',
-      zipCode: companyData.zipCode || '',
-      country: companyData.country || 'USA',
-      employeeCount: companyData.employeeCount || 0,
-      annualRevenue: companyData.annualRevenue || 0,
-      notes: companyData.notes || '',
-      createdAt: new Date().toISOString()
-    };
-    companies.push(newCompany);
-    return Promise.resolve({ ...newCompany });
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error("ApperClient not initialized");
+      }
+
+      const payload = {
+        records: [
+          {
+            name_c: companyData.name,
+            industry_c: companyData.industry,
+            website_c: companyData.website || '',
+            phone_c: companyData.phone || '',
+            email_c: companyData.email || '',
+            address_c: companyData.address || '',
+            city_c: companyData.city || '',
+            state_c: companyData.state || '',
+            zip_code_c: companyData.zipCode || '',
+            country_c: companyData.country || 'USA',
+            employee_count_c: companyData.employeeCount ? parseInt(companyData.employeeCount) : null,
+            annual_revenue_c: companyData.annualRevenue ? parseFloat(companyData.annualRevenue) : null,
+            notes_c: companyData.notes || ''
+          }
+        ]
+      };
+
+      const response = await apperClient.createRecord("company_c", payload);
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
+      }
+
+      if (response.results) {
+        const failed = response.results.filter(r => !r.success);
+        if (failed.length > 0) {
+          console.error(`Failed to create company: ${JSON.stringify(failed)}`);
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+          return null;
+        }
+        return response.results[0]?.data || null;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Failed to create company:", error?.message || error);
+      toast.error("Failed to create company");
+      return null;
+    }
   },
 
   async update(id, companyData) {
-    const index = companies.findIndex(c => c.Id === parseInt(id));
-    if (index === -1) {
-      return Promise.reject(new Error('Company not found'));
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error("ApperClient not initialized");
+      }
+
+      const payload = {
+        records: [
+          {
+            Id: parseInt(id),
+            name_c: companyData.name,
+            industry_c: companyData.industry,
+            website_c: companyData.website || '',
+            phone_c: companyData.phone || '',
+            email_c: companyData.email || '',
+            address_c: companyData.address || '',
+            city_c: companyData.city || '',
+            state_c: companyData.state || '',
+            zip_code_c: companyData.zipCode || '',
+            country_c: companyData.country || 'USA',
+            employee_count_c: companyData.employeeCount ? parseInt(companyData.employeeCount) : null,
+            annual_revenue_c: companyData.annualRevenue ? parseFloat(companyData.annualRevenue) : null,
+            notes_c: companyData.notes || ''
+          }
+        ]
+      };
+
+      const response = await apperClient.updateRecord("company_c", payload);
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
+      }
+
+      if (response.results) {
+        const failed = response.results.filter(r => !r.success);
+        if (failed.length > 0) {
+          console.error(`Failed to update company: ${JSON.stringify(failed)}`);
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+          return null;
+        }
+        return response.results[0]?.data || null;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Failed to update company:", error?.message || error);
+      toast.error("Failed to update company");
+      return null;
     }
-    companies[index] = {
-      ...companies[index],
-      ...companyData,
-      Id: companies[index].Id
-    };
-    return Promise.resolve({ ...companies[index] });
   },
 
   async delete(id) {
-    const index = companies.findIndex(c => c.Id === parseInt(id));
-    if (index === -1) {
-      return Promise.reject(new Error('Company not found'));
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error("ApperClient not initialized");
+      }
+
+      const response = await apperClient.deleteRecord("company_c", {
+        RecordIds: [parseInt(id)]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return false;
+      }
+
+      if (response.results) {
+        const failed = response.results.filter(r => !r.success);
+        if (failed.length > 0) {
+          console.error(`Failed to delete company: ${JSON.stringify(failed)}`);
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+          return false;
+        }
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Failed to delete company:", error?.message || error);
+      toast.error("Failed to delete company");
+      return false;
     }
-    companies.splice(index, 1);
-    return Promise.resolve({ success: true });
   },
 
   async getCompanyContacts(companyId) {
-    const allContacts = await contactService.getAll();
-    return allContacts.filter(contact => contact.companyId === parseInt(companyId));
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error("ApperClient not initialized");
+      }
+
+      const response = await apperClient.fetchRecords("contact_c", {
+        fields: [
+          { field: { Name: "Id" } },
+          { field: { Name: "name_c" } },
+          { field: { Name: "email_c" } },
+          { field: { Name: "phone_c" } },
+          { field: { Name: "company_id_c" } }
+        ],
+        where: [
+          {
+            FieldName: "company_id_c",
+            Operator: "EqualTo",
+            Values: [parseInt(companyId)]
+          }
+        ]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Failed to load company contacts:", error?.message || error);
+      return [];
+    }
   },
 
   async getCompanyDeals(companyId) {
-    const allDeals = await dealService.getAll();
-    const companyContacts = await this.getCompanyContacts(companyId);
-    const contactIds = companyContacts.map(c => c.Id);
-    return allDeals.filter(deal => contactIds.includes(deal.contactId));
+    try {
+      const contacts = await this.getCompanyContacts(companyId);
+      const contactIds = contacts.map(c => c.Id);
+
+      if (contactIds.length === 0) {
+        return [];
+      }
+
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error("ApperClient not initialized");
+      }
+
+      const response = await apperClient.fetchRecords("deal_c", {
+        fields: [
+          { field: { Name: "Id" } },
+          { field: { Name: "name_c" } },
+          { field: { Name: "value_c" } },
+          { field: { Name: "stage_c" } },
+          { field: { Name: "contact_id_c" } }
+        ],
+        whereGroups: [
+          {
+            operator: "OR",
+            subGroups: contactIds.map(contactId => ({
+              conditions: [
+                {
+                  fieldName: "contact_id_c",
+                  operator: "EqualTo",
+                  values: [contactId]
+                }
+              ]
+            }))
+          }
+        ]
+      });
+
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Failed to load company deals:", error?.message || error);
+      return [];
+    }
   },
 
   async getCompanyStats(companyId) {
     const contacts = await this.getCompanyContacts(companyId);
     const deals = await this.getCompanyDeals(companyId);
     
-    const totalDealValue = deals.reduce((sum, deal) => sum + (deal.value || 0), 0);
-    const activeDeals = deals.filter(deal => deal.status !== 'Lost' && deal.status !== 'Won');
-    const wonDeals = deals.filter(deal => deal.status === 'Won');
+    const totalDealValue = deals.reduce((sum, deal) => sum + (deal.value_c || 0), 0);
+    const activeDeals = deals.filter(deal => deal.stage_c !== 'Lost' && deal.stage_c !== 'Closed Won');
+    const wonDeals = deals.filter(deal => deal.stage_c === 'Closed Won');
     
     return {
       contactCount: contacts.length,
@@ -84,7 +327,7 @@ const companyService = {
       totalDealValue,
       activeDealCount: activeDeals.length,
       wonDealCount: wonDeals.length,
-      wonDealValue: wonDeals.reduce((sum, deal) => sum + (deal.value || 0), 0)
+      wonDealValue: wonDeals.reduce((sum, deal) => sum + (deal.value_c || 0), 0)
     };
   }
 };
