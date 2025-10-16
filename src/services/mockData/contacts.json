@@ -1,0 +1,253 @@
+[
+  {
+    "Id": 1,
+    "name": "Sarah Johnson",
+    "email": "sarah.johnson@techcorp.com",
+    "phone": "+1 (555) 234-5678",
+    "title": "Chief Technology Officer",
+    "companyId": 1,
+    "status": "Active",
+    "source": "Website",
+    "assignedTo": "john.doe@company.com",
+    "lastContact": "2024-01-15T10:30:00Z",
+    "activities": [
+      {
+        "id": 1,
+        "type": "call",
+        "date": "2024-01-15T10:30:00Z",
+        "notes": "Discussed Q1 partnership opportunities"
+      }
+    ]
+  },
+  {
+    "Id": 2,
+    "name": "Michael Chen",
+    "email": "mchen@innovatesoft.com",
+    "phone": "+1 (555) 345-6789",
+    "title": "VP of Engineering",
+    "companyId": 2,
+    "status": "Active",
+    "source": "Referral",
+    "assignedTo": "jane.smith@company.com",
+    "lastContact": "2024-01-14T14:20:00Z",
+    "activities": [
+      {
+        "id": 2,
+        "type": "email",
+        "date": "2024-01-14T14:20:00Z",
+        "notes": "Sent product demo invitation"
+      }
+    ]
+  },
+  {
+    "Id": 3,
+    "name": "Emily Rodriguez",
+    "email": "emily.r@globalenterprises.com",
+    "phone": "+1 (555) 456-7890",
+    "title": "Director of Operations",
+    "companyId": 3,
+    "status": "Active",
+    "source": "LinkedIn",
+    "assignedTo": "john.doe@company.com",
+    "lastContact": "2024-01-13T09:15:00Z",
+    "activities": []
+  },
+  {
+    "Id": 4,
+    "name": "David Park",
+    "email": "dpark@startupventures.io",
+    "phone": "+1 (555) 567-8901",
+    "title": "Founder & CEO",
+    "companyId": 4,
+    "status": "Active",
+    "source": "Conference",
+    "assignedTo": "jane.smith@company.com",
+    "lastContact": "2024-01-12T16:45:00Z",
+    "activities": [
+      {
+        "id": 3,
+        "type": "meeting",
+        "date": "2024-01-12T16:45:00Z",
+        "notes": "Initial consultation meeting completed"
+      }
+    ]
+  },
+  {
+    "Id": 5,
+    "name": "Lisa Thompson",
+    "email": "lisa.thompson@retailmax.com",
+    "phone": "+1 (555) 678-9012",
+    "title": "Head of Digital Marketing",
+    "companyId": 5,
+    "status": "Active",
+    "source": "Website",
+    "assignedTo": "john.doe@company.com",
+    "lastContact": "2024-01-11T11:30:00Z",
+    "activities": []
+  },
+  {
+    "Id": 6,
+    "name": "James Wilson",
+    "email": "jwilson@financialservices.com",
+    "phone": "+1 (555) 789-0123",
+    "title": "Senior Account Manager",
+    "companyId": 1,
+    "status": "Active",
+    "source": "Referral",
+    "assignedTo": "jane.smith@company.com",
+    "lastContact": "2024-01-10T13:20:00Z",
+    "activities": [
+      {
+        "id": 4,
+        "type": "call",
+        "date": "2024-01-10T13:20:00Z",
+        "notes": "Follow-up on proposal submission"
+      }
+    ]
+  },
+  {
+    "Id": 7,
+    "name": "Amanda Lee",
+    "email": "alee@healthtech.com",
+    "phone": "+1 (555) 890-1234",
+    "title": "Product Manager",
+    "companyId": 2,
+    "status": "Inactive",
+    "source": "LinkedIn",
+    "assignedTo": "john.doe@company.com",
+    "lastContact": "2023-12-20T10:00:00Z",
+    "activities": []
+  },
+  {
+    "Id": 8,
+    "name": "Robert Martinez",
+    "email": "rmartinez@manufacturing.com",
+    "phone": "+1 (555) 901-2345",
+    "title": "Operations Director",
+    "companyId": 3,
+    "status": "Active",
+    "source": "Trade Show",
+    "assignedTo": "jane.smith@company.com",
+    "lastContact": "2024-01-09T15:30:00Z",
+    "activities": [
+      {
+        "id": 5,
+        "type": "email",
+        "date": "2024-01-09T15:30:00Z",
+        "notes": "Shared case studies and ROI analysis"
+      }
+    ]
+  },
+  {
+    "Id": 9,
+    "name": "Jennifer Brown",
+    "email": "jbrown@consultinggroup.com",
+    "phone": "+1 (555) 012-3456",
+    "title": "Managing Partner",
+    "companyId": 4,
+    "status": "Active",
+    "source": "Referral",
+    "assignedTo": "john.doe@company.com",
+    "lastContact": "2024-01-08T09:45:00Z",
+    "activities": []
+  },
+  {
+    "Id": 10,
+    "name": "Kevin Anderson",
+    "email": "kanderson@logisticsplus.com",
+    "phone": "+1 (555) 123-4567",
+    "title": "VP of Supply Chain",
+    "companyId": 5,
+    "status": "Active",
+    "source": "Website",
+    "assignedTo": "jane.smith@company.com",
+    "lastContact": "2024-01-07T14:15:00Z",
+    "activities": [
+      {
+        "id": 6,
+        "type": "meeting",
+        "date": "2024-01-07T14:15:00Z",
+        "notes": "Discovery call to understand requirements"
+      }
+    ]
+  },
+  {
+    "Id": 11,
+    "name": "Michelle Davis",
+    "email": "mdavis@educationtech.com",
+    "phone": "+1 (555) 234-5679",
+    "title": "Chief Learning Officer",
+    "companyId": 1,
+    "status": "Active",
+    "source": "LinkedIn",
+    "assignedTo": "john.doe@company.com",
+    "lastContact": "2024-01-06T10:30:00Z",
+    "activities": []
+  },
+  {
+    "Id": 12,
+    "name": "Christopher Taylor",
+    "email": "ctaylor@realestate.com",
+    "phone": "+1 (555) 345-6780",
+    "title": "Commercial Director",
+    "companyId": 2,
+    "status": "Active",
+    "source": "Conference",
+    "assignedTo": "jane.smith@company.com",
+    "lastContact": "2024-01-05T16:00:00Z",
+    "activities": [
+      {
+        "id": 7,
+        "type": "call",
+        "date": "2024-01-05T16:00:00Z",
+        "notes": "Discussed pricing and implementation timeline"
+      }
+    ]
+  },
+  {
+    "Id": 13,
+    "name": "Nicole Garcia",
+    "email": "ngarcia@mediagroup.com",
+    "phone": "+1 (555) 456-7891",
+    "title": "Creative Director",
+    "companyId": 3,
+    "status": "Active",
+    "source": "Referral",
+    "assignedTo": "john.doe@company.com",
+    "lastContact": "2024-01-04T11:45:00Z",
+    "activities": []
+  },
+  {
+    "Id": 14,
+    "name": "Daniel White",
+    "email": "dwhite@insurancegroup.com",
+    "phone": "+1 (555) 567-8902",
+    "title": "Risk Management Lead",
+    "companyId": 4,
+    "status": "Inactive",
+    "source": "Website",
+    "assignedTo": "jane.smith@company.com",
+    "lastContact": "2023-12-15T13:30:00Z",
+    "activities": []
+  },
+  {
+    "Id": 15,
+    "name": "Rachel Moore",
+    "email": "rmoore@pharmainnovations.com",
+    "phone": "+1 (555) 678-9013",
+    "title": "Research Director",
+    "companyId": 5,
+    "status": "Active",
+    "source": "LinkedIn",
+    "assignedTo": "john.doe@company.com",
+    "lastContact": "2024-01-03T09:00:00Z",
+    "activities": [
+      {
+        "id": 8,
+        "type": "email",
+        "date": "2024-01-03T09:00:00Z",
+        "notes": "Sent technical documentation and specifications"
+      }
+    ]
+  }
+]
