@@ -24,11 +24,13 @@ export async function getAllTasks() {
         { field: { Name: "Id" } },
         { field: { Name: "title_c" } },
         { field: { Name: "description_c" } },
-        { field: { Name: "status_c" } },
         { field: { Name: "priority_c" } },
         { field: { Name: "due_date_c" } },
-        { field: { Name: "assigned_to_c" } },
-        { field: { Name: "completed_c" } }
+        { field: { Name: "entity_type_c" } },
+        { field: { Name: "entity_id_c" } },
+        { field: { Name: "entity_name_c" } },
+        { field: { Name: "completed_c" } },
+        { field: { Name: "completed_at_c" } }
       ],
       pagingInfo: {
         limit: 100,
@@ -66,11 +68,13 @@ export async function getTaskById(id) {
         { field: { Name: "Id" } },
         { field: { Name: "title_c" } },
         { field: { Name: "description_c" } },
-        { field: { Name: "status_c" } },
         { field: { Name: "priority_c" } },
         { field: { Name: "due_date_c" } },
-        { field: { Name: "assigned_to_c" } },
-        { field: { Name: "completed_c" } }
+        { field: { Name: "entity_type_c" } },
+        { field: { Name: "entity_id_c" } },
+        { field: { Name: "entity_name_c" } },
+        { field: { Name: "completed_c" } },
+        { field: { Name: "completed_at_c" } }
       ]
     };
 
@@ -104,10 +108,11 @@ export async function createTask(taskData) {
       records: [{
         title_c: taskData.title_c || taskData.title,
         description_c: taskData.description_c || taskData.description || '',
-        status_c: taskData.status_c || taskData.status || 'pending',
         priority_c: taskData.priority_c || taskData.priority || 'medium',
         due_date_c: taskData.due_date_c || taskData.dueDate || taskData.due_date,
-        assigned_to_c: taskData.assigned_to_c || taskData.assignedTo || taskData.assigned_to,
+        entity_type_c: taskData.entity_type_c || taskData.entityType || '',
+        entity_id_c: taskData.entity_id_c || taskData.entityId || null,
+        entity_name_c: taskData.entity_name_c || taskData.entityName || '',
         completed_c: taskData.completed_c !== undefined ? taskData.completed_c : (taskData.completed || false)
       }]
     };
@@ -158,20 +163,26 @@ export async function updateTask(id, taskData) {
     if (taskData.description_c !== undefined || taskData.description !== undefined) {
       updateFields.description_c = taskData.description_c || taskData.description;
     }
-    if (taskData.status_c !== undefined || taskData.status !== undefined) {
-      updateFields.status_c = taskData.status_c || taskData.status;
-    }
     if (taskData.priority_c !== undefined || taskData.priority !== undefined) {
       updateFields.priority_c = taskData.priority_c || taskData.priority;
     }
     if (taskData.due_date_c !== undefined || taskData.dueDate !== undefined || taskData.due_date !== undefined) {
       updateFields.due_date_c = taskData.due_date_c || taskData.dueDate || taskData.due_date;
     }
-    if (taskData.assigned_to_c !== undefined || taskData.assignedTo !== undefined || taskData.assigned_to !== undefined) {
-      updateFields.assigned_to_c = taskData.assigned_to_c || taskData.assignedTo || taskData.assigned_to;
+    if (taskData.entity_type_c !== undefined || taskData.entityType !== undefined) {
+      updateFields.entity_type_c = taskData.entity_type_c || taskData.entityType;
+    }
+    if (taskData.entity_id_c !== undefined || taskData.entityId !== undefined) {
+      updateFields.entity_id_c = taskData.entity_id_c || taskData.entityId;
+    }
+    if (taskData.entity_name_c !== undefined || taskData.entityName !== undefined) {
+      updateFields.entity_name_c = taskData.entity_name_c || taskData.entityName;
     }
     if (taskData.completed_c !== undefined || taskData.completed !== undefined) {
       updateFields.completed_c = taskData.completed_c !== undefined ? taskData.completed_c : taskData.completed;
+      if (updateFields.completed_c) {
+        updateFields.completed_at_c = new Date().toISOString();
+      }
     }
 
     const params = {

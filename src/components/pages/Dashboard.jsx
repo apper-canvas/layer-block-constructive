@@ -36,7 +36,7 @@ const loadData = async () => {
         companyService.getAll(),
         leadService.getAll(),
         dealService.getAll(),
-        taskService.getAll()
+        taskService.getAllTasks()
       ]);
       
       // Aggregate activities from contacts and leads
@@ -109,14 +109,14 @@ if (loading) return <Loading />;
 .slice(0, 5);
 
   // Get overdue tasks
-  const overdueTasks = tasks
-    .filter(task => !task.completed && isPast(new Date(task.dueDate)))
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+const overdueTasks = tasks
+    .filter(task => !task.completed_c && task.due_date_c && isPast(new Date(task.due_date_c)))
+    .sort((a, b) => new Date(a.due_date_c) - new Date(b.due_date_c))
     .slice(0, 5);
 
-  async function handleMarkTaskComplete(taskId) {
+async function handleMarkTaskComplete(taskId) {
     try {
-      await taskService.markComplete(taskId);
+      await taskService.updateTask(taskId, { completed_c: true });
       toast.success("Task marked as complete");
       loadData();
     } catch (error) {
@@ -317,29 +317,29 @@ if (loading) return <Loading />;
           </div>
 <div className="space-y-3">
             {overdueTasks.length > 0 ? (
-              overdueTasks.map((task) => (
-                <div key={`${task.Id}-${task.dueDate}-${task.priority}`} className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
+overdueTasks.map((task) => (
+                <div key={`${task.Id}-${task.due_date_c}-${task.priority_c}`} className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
                   <button
                     onClick={() => handleMarkTaskComplete(task.Id)}
                     className="flex-shrink-0 w-5 h-5 rounded border-2 border-red-400 flex items-center justify-center transition-all mt-0.5 hover:bg-red-400 hover:border-red-500"
                   >
                   </button>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{task.title}</p>
+                    <p className="text-sm font-medium text-gray-900 truncate">{task.title_c}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <p className="text-xs text-red-600 font-medium">
-                        Due: {format(new Date(task.dueDate), "MMM d, yyyy")}
+                        Due: {format(new Date(task.due_date_c), "MMM d, yyyy")}
                       </p>
-                      {task.entityName && (
+                      {task.entity_name_c && (
                         <>
                           <span className="text-xs text-gray-400">•</span>
-                          <p className="text-xs text-gray-600">{task.entityName}</p>
+                          <p className="text-xs text-gray-600">{task.entity_name_c}</p>
                         </>
                       )}
                     </div>
                   </div>
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium bg-red-100 text-red-700 border border-red-200">
-                    {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                    {task.priority_c?.charAt(0).toUpperCase() + task.priority_c?.slice(1)}
                   </span>
                 </div>
               ))
